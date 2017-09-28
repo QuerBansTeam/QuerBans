@@ -5,6 +5,7 @@ error_reporting(E_ALL);
 
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
+define('DEVEL', 1);
 
 try {
 
@@ -17,12 +18,20 @@ try {
     /**
      * Handle routes
      */
-    include APP_PATH . '/config/router.php';
+    if (!DEVEL) {
+        include APP_PATH . '/config/router.php';
+    } else {
+        include APP_PATH . '/config/development/router.php';
+    }
 
     /**
      * Read services
      */
-    include APP_PATH . '/config/services.php';
+    if (!DEVEL) {
+        include APP_PATH . '/config/services.php';
+    } else {
+        include APP_PATH . '/config/development/services.php';
+    }
 
     /**
      * Get config service for use in inline setup below
@@ -32,7 +41,11 @@ try {
     /**
      * Include Autoloader
      */
-    include APP_PATH . '/config/loader.php';
+    if (!DEVEL) {
+        include APP_PATH . '/config/loader.php';
+    } else {
+        include APP_PATH . '/config/development/loader.php';
+    }
 
     /**
      * Handle the request
