@@ -1,2 +1,3 @@
-/cache/
-/config/development/
+cache/*
+!cache/.gitkeep
+app/config/development/
