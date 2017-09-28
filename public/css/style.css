@@ -73,3 +73,11 @@
     width: 40px;
     height: 40px;
 }
+
+.card-title
+{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: normal;
+}
