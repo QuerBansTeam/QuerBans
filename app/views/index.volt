@@ -67,6 +67,7 @@
         <script>
             $(function () {
                 $('[data-toggle="popover"]').popover();
+                $('[data-toggle="tooltip"]').tooltip();
             });
             $('body').on('click', function (e) {
                 $('[data-toggle="popover"]').each(function () {

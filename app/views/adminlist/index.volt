@@ -30,7 +30,7 @@
                                 <div class="card" style="text-align: center; border-width: 2px; padding: 5%;">
                                     <img src="{{ admin['avatarfull'] }}" class="card-img-top" style="display: block; margin-left: auto; margin-right :auto;">
                                     <div class="card-block">
-                                        <h5 class="card-title">{{ admin['personaname'] }}</h5>
+                                        <h5 class="card-title" data-toggle="tooltip" data-placement="top" title="{{ admin['personaname'] }}">{{ admin['personaname'] }}</h5>
                                         <p class="card-text" style="font-weight: bold; {{ admin['personastate'] > 0 ? 'color: green;' : 'color: red;' }}">
                                             {{ profileStateName }}
                                             {% if admin['personastate'] !== -1 and admin['communityvisibilitystate'] === 1 %}
