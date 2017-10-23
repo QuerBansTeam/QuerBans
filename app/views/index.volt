@@ -47,8 +47,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/search"><i class="fa fa-search fa-lg" aria-hidden="true"></i> Search</a>
                     </li>
+                    {% if activePage !== 'servers' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/servers"><i class="fa fa-server fa-lg" aria-hidden="true"></i> Servers</a>
+                    {% else %}
+                    <li class="nav-item active">
+                    {% endif %}
+                        {{ link_to(url('servers'), '<i class="fa fa-server fa-lg" aria-hidden="true"></i> Servers', 'class': 'nav-link') }}
+                        {% if activePage === "adminlist" %}
+                        <span class="sr-only">(current)</span>
+                        {% endif %}
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0" action="/login/index" method="post">
