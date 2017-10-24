@@ -37,4 +37,9 @@ $router->add('/adminlist', [
     "action" => 'index',
 ]);
 
+$router->add('/servers', [
+    "controller" => 'servers',
+    "action" => 'index',
+]);
+
 $router->handle();
