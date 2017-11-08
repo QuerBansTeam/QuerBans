@@ -113,10 +113,12 @@ function SteamID2ToSteamID64(string $steamid2) : string {
     $steamIdParts = explode(':', $steamid2);
     //https://developer.valvesoftware.com/wiki/SteamID
     if (PHP_INT_SIZE == 8) {
-        return (string)($steamIdParts[2] * 2 + 0x0110000100000000 + $steamIdParts[1]);
+        return strval($steamIdParts[2] * 2 + 0x0110000100000000 + $steamIdParts[1]);
     } else {
-        $result = '765'.($steamIdParts[2] * 2 + $steamIdParts[1] + 61197960265728);
-        return (string)$result;
+        $result = gmp_mul($steamIdParts[2], 2);
+        $result = gmp_add($result, '0x0110000100000000');
+        $result = gmp_add($result, $steamIdParts[1]);
+        return gmp_strval($result);
     }
 }
 
