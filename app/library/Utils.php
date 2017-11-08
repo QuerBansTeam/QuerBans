@@ -133,3 +133,24 @@ function CheckSteamIds(array $ids) : string {
 
     return $curlData;
 }
+
+function IsValidIp(string $ip) : bool {
+    if (!strlen($ip)) {
+        return false;
+    }
+    $ipParts = explode('.', $ip);
+
+    if (count($ipParts) != 4) {
+        return false;
+    }
+
+    $ipPos = 0;
+
+    foreach ($ipParts as $value) {
+        if (!strlen($value) || ($value[0] === '0' && $ipPos === 0) || intval($value) < 0 || intval($value) > 255) {
+            return false;
+        }
+        ++$ipPos;
+    }
+    return true;
+}

@@ -392,24 +392,7 @@ class BanEditForm extends Form
             new Callback([
                 "callback" => function($data) {
                     $ip = $data['player_ip'];
-                    if (!strlen($ip)) {
-                        return false;
-                    }
-                    $ipParts = explode('.', $ip);
-
-                    if (count($ipParts) != 4) {
-                        return false;
-                    }
-
-                    $ipPos = 0;
-
-                    foreach ($ipParts as $value) {
-                        if (!strlen($value) || ($value[0] === '0' && $ipPos === 0) || intval($value) < 0 || intval($value) > 255) {
-                            return false;
-                        }
-                        ++$ipPos;
-                    }
-                    return true;
+                    return IsValidIp($ip);
                 },
                 "message" => "Invalid IP address",
             ])
