@@ -401,10 +401,13 @@ class BanEditForm extends Form
                         return false;
                     }
 
+                    $ipPos = 0;
+
                     foreach ($ipParts as $value) {
-                        if (!strlen($value) || $value[0] === '0' || (int)$value < 1 || (int)$value > 255) {
+                        if (!strlen($value) || ($value[0] === '0' && $ipPos === 0) || intval($value) < 0 || intval($value) > 255) {
                             return false;
                         }
+                        ++$ipPos;
                     }
                     return true;
                 },
