@@ -220,7 +220,7 @@ class ServerQuery {
             $this->_getLong();
 
             $packetNumber = $this->_getByte();
-            $packetsNum = $packetNumber & 0xF0;
+            $packetsNum = $packetNumber & 0xF;
             $packetPayLoad[$packetNumber >> 4] = $this->_getAll();
             $packetRecieved = 1;
 
