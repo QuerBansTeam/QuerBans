@@ -23,7 +23,7 @@ class ServerQuery {
             throw new Exception('Cannot create socket: ' . socket_strerror(socket_last_error()));
         }
 
-        socket_connect($this->_socket, 'localhost', 27015);
+        socket_connect($this->_socket, $ip, $port);
     }
 
     function __destruct() {
