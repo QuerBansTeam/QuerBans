@@ -42,4 +42,9 @@ $router->add('/servers', [
     "action" => 'index',
 ]);
 
+$router->add('/servers/get', [
+    "controller" => 'servers',
+    "action" => 'get',
+]);
+
 $router->handle();
