@@ -42,7 +42,7 @@ class ServerQuery {
         $serverInfo = [];
         try {
             if ($this->_getByte() !== 0x49) {
-                throw new Exception(chr($header));
+                throw new Exception('Header mismatch');
             }
             $serverInfo['protocol'] = $this->_getByte();
             $serverInfo['name'] = $this->_getString();
