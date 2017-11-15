@@ -94,7 +94,7 @@ class ServerQuery {
                     $playerId = $this->_getByte();
                     $playersInfo['players'][$playerId]['name'] = $this->_getString();
                     $playersInfo['players'][$playerId]['score'] = $this->_getLong();
-                    $playersInfo['players'][$playerId]['time'] = $this->_getFloat();
+                    $playersInfo['players'][$playerId]['time'] = round($this->_getFloat(), 0, PHP_ROUND_HALF_DOWN);
                 }
             }
         } catch (Exception $e) {
