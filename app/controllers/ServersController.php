@@ -25,7 +25,7 @@ class ServersController extends ControllerBase {
         $this->view->disable();
 
         if ($this->request->isPost() && $this->request->isAjax()) {
-            $ip = $this->dispatcher->getParam('ip');
+            $ip = $this->request->getPost('ip');
 
             $portPos = strpos($ip, ':');
             try {
