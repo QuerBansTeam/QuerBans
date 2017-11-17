@@ -14,7 +14,7 @@ class ServerQuery {
 
     function __construct(string $ip, int $port) {
         if (!IsValidIp($ip)) {
-            throw new Exception('IP is not valid');
+            throw new Exception('Invalid IP address');
         }
 
         $this->_socket = @socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
