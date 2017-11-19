@@ -24,7 +24,7 @@ class ServersController extends ControllerBase {
     public function getAction() {
         $this->view->disable();
 
-        if ($this->request->isPost() && $this->request->isAjax() && $this->request->getClientAddress() === '127.0.0.1') {
+        if ($this->request->isPost() && $this->request->isAjax() && $this->security->checkToken(null, null, false)) {
             $ip = $this->request->getPost('ip');
 
             $portPos = strpos($ip, ':');

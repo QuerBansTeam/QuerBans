@@ -1,21 +1,38 @@
 <script>
 
-console.log('dupa');
 function getInfo(address, id) {
     $.ajax({
         'url': '{{ url("servers/get") }}',
         'method': 'POST',
-        'data': { ip : address },
+        'data': { ip : address, {{ this.security.getTokenKey() }} : '{{ this.security.getToken() }}' },
         'dataType': 'json',
     }).done(function(data) {
         console.log(data);
 
         var baseDir = "{{ url('img/') }}";
 
-       $('#game'+id).html('<img src="'+baseDir+'games/'+data.server.folder+'.png">');
+        $('#game' + id).html('<img src="' + baseDir + 'games/' + data.server.folder + '.png">');
 
-       $('#vac'+id).html('<img src="'+baseDir+'VAC/'+data.server.folder ? 'vac_fill.png">' : 'no_vac_fill.png">');
+        var vacImg = (data.server.vac) ? 'vac_fill' : 'no_vac_fill';
+        $('#vac' + id).html('<img src="' + baseDir + 'VAC/' + vacImg + '.png">');
 
+        var osImg;
+        switch(data.server.os) {
+            case 'l':
+                osImg = 'linux_fill';
+                break;
+            case 'w':
+                osImg = 'windows_fill';
+                break;
+            default:
+                osImg = 'apple_fill';
+        }
+        $('#os' + id).html('<img src="' + baseDir + 'OS/' + osImg + '.png">');
+
+        var passImg = (data.server.password) ? 'lock_fill' : 'unlock_fill';
+        $('#pass' + id).html('<img src="' + baseDir + 'custom/' + passImg + '.png">');
+        $('#host' + id).html(data.server.name);
+        $('#players' + id).html(data.server.players + '/' + data.server.maxplayers);
     }).always(function(data) {
 
     })
@@ -61,8 +78,8 @@ function getInfo(address, id) {
 </nav>
 #}
 
-<table class="table table-striped table-hover table-sm table-responsive table-fixed">
-    <thead class="thead-inverse" id="theader">
+<table class="table table-striped table-hover table-sm table-responsive-sm">
+    <thead class="thead-dark" id="theader">
         <tr>
             <th>Mod</th>
             <th>VAC</th>
@@ -77,7 +94,6 @@ function getInfo(address, id) {
    {% for index, ip in ipArray %}
         <script type="text/javascript">
             getInfo('{{ ip }}', {{ index }});
-
         </script>
         <tr>
             <td id="game{{index}}">
@@ -85,20 +101,15 @@ function getInfo(address, id) {
             <td id="vac{{index}}">
             </td>
             <td id="os{{index}}">
-                {{ image('img/OS/linux_fill.png', 'style': 'width: 35px') }}
             </td>
             <td id="pass{{index}}">
-            	{{ image('img/custom/lock_fill.png', 'style': 'width: 35px') }}
             </td>
             <td id="host{{index}}">
-               {# {{ server.getHostName()|e }} #}
-               go ha go ha go ha go ha go |3zł
             </td>
             <td id="players{{index}}">
-                0/64 
             </td>
             <td>
-				{% set playersButton = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#playersModal%d">Players</button>'|format(1) %}
+				{% set playersButton = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#playersModal{{ index }}">Players</button>' %}
                 <button id="bidButton"
                     type="button"
                     class="btn btn-info"
@@ -107,7 +118,7 @@ function getInfo(address, id) {
                     data-html="true"
                     title="Server's details"
                     data-content="{{ popoverContentTemplate|format(
-                        
+
                         playersButton
                         )|escape_attr }}">
                     Show
