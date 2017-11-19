@@ -24,22 +24,8 @@ class ServersController extends ControllerBase {
     public function getAction() {
         $this->view->disable();
 
-        if ($this->request->isPost() && $this->request->isAjax()) {
-            $ip = $this->dispatcher->getParam('ip');
-
-            if (!strlen($ip)) {
-                echo json_encode([
-                    "error" => "Empty IP address",
-                ]);
-                return;
-            }
-
-            if (!IsValidIp($ip)) {
-                echo json_encode([
-                    "error" => "Invalid IP address",
-                ]);
-                return;
-            }
+        if ($this->request->isPost() && $this->request->isAjax() && $this->request->getClientAddress() === '127.0.0.1') {
+            $ip = $this->request->getPost('ip');
 
             $portPos = strpos($ip, ':');
             try {
