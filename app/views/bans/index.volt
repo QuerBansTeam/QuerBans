@@ -87,7 +87,7 @@ function showErrors(errorFieldsNames, errorFieldsMsgs, banid) {
     {% endif %}
 {% endif %}
 <table class="table table-striped table-hover table-sm table-responsive table-fixed">
-    <thead class="thead-inverse" id="theader">
+    <thead class="thead-dark" id="theader">
         <tr>
             <th>Game</th>
             <th>Date</th>
