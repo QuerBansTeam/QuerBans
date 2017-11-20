@@ -24,6 +24,10 @@ class ServerQuery {
         }
 
         socket_connect($this->_socket, $ip, $port);
+        socket_set_option($this->_socket, SOL_SOCKET, SO_RCVTIMEO, [
+            "sec" => 1,
+            "usec" => 500000,
+        ]);
     }
 
     function __destruct() {
