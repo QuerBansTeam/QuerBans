@@ -1,25 +1,32 @@
 {% extends 'layout.volt' %}
 
+{% block style %}
+    .popover
+    {
+        display: table;
+    }
+{% endblock %}
+
 {% block title %}
     Bans list
 {% endblock %}
 
 {% block script %}
-    
+
     function validateForm(id) {
-    $.ajax({
-        'url': '{{ url("bans/validate") }}',
-        'method': 'POST',
-        'data': $('#editForm' + id).serialize(),
-        'dataType': 'json',
-    }).done(function(data) {
-        console.log(data);
+        $.ajax({
+            'url': '{{ url("bans/validate") }}',
+            'method': 'POST',
+            'data': $('#editForm' + id).serialize(),
+            'dataType': 'json',
+        }).done(function(data) {
+            console.log(data);
 
-        showErrors(data.error.fields.name, data.error.fields.message, id);
+            showErrors(data.error.fields.name, data.error.fields.message, id);
 
-        $('#saveButton' + id).prop('disabled', data.error.exist);
-        $('#banButton' + id).prop('disabled', data.error.exist);
-    })
+            $('#saveButton' + id).prop('disabled', data.error.exist);
+            $('#banButton' + id).prop('disabled', data.error.exist);
+        });
     }
 
     function showErrors(errorFieldsNames, errorFieldsMsgs, banid) {
