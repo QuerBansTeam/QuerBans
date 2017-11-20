@@ -1,5 +1,9 @@
 {% extends 'layout.volt' %}
 
+{% block title %}
+    Admins list
+{% endblock %}
+
 {% block style %}
     
     .btn

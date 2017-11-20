@@ -1,5 +1,9 @@
 {% extends 'layout.volt' %}
 
+{% block title %}
+    Servers list
+{% endblock %}
+
 {% block style %}
 
     td > img
@@ -122,62 +126,3 @@ function getInfo(address, id) {
     </table>    
 
     {% endblock %}
-
-    {% block tableH %}
-
-        <thead class="thead-dark" id="theader">
-            <tr>
-                <th>Mod</th>
-                <th>VAC</th>
-                <th>OS</th>
-                <th>Password</th>
-                <th>Server name</th>
-                <th>Players</th>
-                <th>Info</th>
-            </tr>
-        </thead>
-        
-        
-
-    {% endblock %}
-
-    {% block tableB %}
-        {% for index, ip in ipArray %}
-            <script type="text/javascript">
-                getInfo('{{ ip }}', {{ index }});
-            </script>
-            <tr>
-                <td id="game{{index}}">
-                </td>
-                <td id="vac{{index}}">
-                </td>
-                <td id="os{{index}}">
-                </td>
-                <td id="pass{{index}}">
-                </td>
-                <td id="host{{index}}">
-                </td>
-                <td id="players{{index}}">
-                </td>
-                <td>
-                    {% set playersButton = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#playersModal{{ index }}">Players</button>' %}
-                    <button id="bidButton"
-                        type="button"
-                        class="btn btn-info"
-                        data-placement="auto"
-                        data-toggle="popover"
-                        data-html="true"
-                        title="Server's details"
-                        data-content="{{ popoverContentTemplate|format(
-
-                            playersButton
-                            )|escape_attr }}">
-                        Show
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-{% endblock %}

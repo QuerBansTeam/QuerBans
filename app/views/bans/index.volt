@@ -1,5 +1,9 @@
 {% extends 'layout.volt' %}
 
+{% block title %}
+    Bans list
+{% endblock %}
+
 {% block script %}
     
     function validateForm(id) {
