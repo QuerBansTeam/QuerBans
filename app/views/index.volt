@@ -9,9 +9,8 @@
         {{ stylesheet_link('css/bootstrap.min.css') }}
         {{ stylesheet_link('css/style.css') }}
         {{ stylesheet_link('css/font-awesome.min.css') }}
-        {{ javascript_include('js/popper.min.js') }}
         {{ javascript_include('js/jquery-3.2.1.min.js') }}
-        {{ javascript_include('js/bootstrap.min.js') }}
+        {{ javascript_include('js/bootstrap.bundle.min.js') }}
     </head>
     <body>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
