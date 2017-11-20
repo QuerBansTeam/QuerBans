@@ -220,8 +220,8 @@ class ServerQuery {
 
     private function _implodePacketsPayloadsIfSplitted() : void {
         if ($this->_getLong() === -2) {
-            // Unique packet's id, useful?
-            $this->_getLong();
+
+            $requestId = $this->_getLong();
 
             $packetNumber = $this->_getByte();
             $packetsNum = $packetNumber & 0xF;
@@ -233,13 +233,14 @@ class ServerQuery {
                 $this->_currentPos = 0;
                 $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
 
-                // TODO: Check for split?
-                $this->_getLong();
-                // Unique packet's id, useful?
-                $this->_getLong();
+                if ($this->_getLong() !== -2) {
+                    throw new Exception('Got non splitted packet while expecting splitted one');
+                }
 
-                $packetPayLoad[$this->_getByte() >> 4] = $this->_getAll();
-                $packetRecieved++;
+                if ($this->_getLong() === $requestId) {
+                    $packetPayLoad[$this->_getByte() >> 4] = $this->_getAll();
+                    $packetRecieved++;
+                }
             }
             $this->_buffer = implode($packetPayLoad);
             $this->_recievedLen = strlen($this->_buffer);
