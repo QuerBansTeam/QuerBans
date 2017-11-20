@@ -41,6 +41,10 @@ class ServerQuery {
         $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
+        if (!$this->_recievedLen) {
+            throw new Exception('Server timed out');
+        }
+
         $this->_implodePacketsPayloadsIfSplitted();
 
         $serverInfo = [];
@@ -84,6 +88,10 @@ class ServerQuery {
         $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
+        if (!$this->_recievedLen) {
+            throw new Exception('Server timed out');
+        }
+
         $this->_implodePacketsPayloadsIfSplitted();
 
         $playersInfo = [];
@@ -112,6 +120,10 @@ class ServerQuery {
         socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_RULES, $challengeNumber));
         $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
+
+        if (!$this->_recievedLen) {
+            throw new Exception('Server timed out');
+        }
 
         $this->_implodePacketsPayloadsIfSplitted();
 
