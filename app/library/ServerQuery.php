@@ -24,6 +24,10 @@ class ServerQuery {
         }
 
         socket_connect($this->_socket, $ip, $port);
+        socket_set_option($this->_socket, SOL_SOCKET, SO_RCVTIMEO, [
+            "sec" => 1,
+            "usec" => 500000,
+        ]);
     }
 
     function __destruct() {
@@ -33,7 +37,7 @@ class ServerQuery {
     }
 
     public function getServerInfo() : array {
-        socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, 0x54, 'Source Engine Query'));
+        socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_INFO, 'Source Engine Query'));
         $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
@@ -216,8 +220,8 @@ class ServerQuery {
 
     private function _implodePacketsPayloadsIfSplitted() : void {
         if ($this->_getLong() === -2) {
-            // Unique packet's id, useful?
-            $this->_getLong();
+
+            $requestId = $this->_getLong();
 
             $packetNumber = $this->_getByte();
             $packetsNum = $packetNumber & 0xF;
@@ -229,13 +233,14 @@ class ServerQuery {
                 $this->_currentPos = 0;
                 $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
 
-                // TODO: Check for split?
-                $this->_getLong();
-                // Unique packet's id, useful?
-                $this->_getLong();
+                if ($this->_getLong() !== -2) {
+                    throw new Exception('Got non splitted packet while expecting splitted one');
+                }
 
-                $packetPayLoad[$this->_getByte() >> 4] = $this->_getAll();
-                $packetRecieved++;
+                if ($this->_getLong() === $requestId) {
+                    $packetPayLoad[$this->_getByte() >> 4] = $this->_getAll();
+                    $packetRecieved++;
+                }
             }
             $this->_buffer = implode($packetPayLoad);
             $this->_recievedLen = strlen($this->_buffer);
