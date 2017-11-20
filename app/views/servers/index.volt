@@ -92,7 +92,7 @@ function getInfo(address, id) {
 
     <table class="table table-striped table-hover table-sm table-responsive-sm">
         <thead class="thead-dark" id="theader">
-            <tr >
+            <tr>
                 <th>Mod</th>
                 <th>VAC</th>
                 <th>OS</th>
