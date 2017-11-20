@@ -37,7 +37,7 @@ class ServerQuery {
     }
 
     public function getServerInfo() : array {
-        socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, 0x54, 'Source Engine Query'));
+        socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_INFO, 'Source Engine Query'));
         $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
