@@ -38,7 +38,7 @@ class ServerQuery {
 
     public function getServerInfo() : array {
         socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_INFO, 'Source Engine Query'));
-        $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
@@ -85,7 +85,7 @@ class ServerQuery {
     public function getPlayers() : array {
         $challengeNumber = $this->_getChallengeNumber(self::A2S_PLAYER);
         socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_PLAYER, $challengeNumber));
-        $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
@@ -118,7 +118,7 @@ class ServerQuery {
     public function getRules() : array {
         $challengeNumber = $this->_getChallengeNumber(self::A2S_RULES);
         socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_RULES, $challengeNumber));
-        $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
@@ -215,7 +215,7 @@ class ServerQuery {
         socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, $request, -1));
 
         $challengeNumber = $this->_currentPos = 0;
-        $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
 
         if ($this->_getLong() === -1) {
             if ($this->_getByte() === 0x41) {
@@ -243,7 +243,7 @@ class ServerQuery {
             // Get rest of the packets
             while ($packetRecieved < $packetsNum) {
                 $this->_currentPos = 0;
-                $this->_recievedLen = socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+                $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
 
                 if ($this->_getLong() !== -2) {
                     throw new Exception('Got non splitted packet while expecting splitted one');
