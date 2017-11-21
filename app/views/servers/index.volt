@@ -176,19 +176,3 @@ function getInfo(address, id) {
     </table>    
 
     {% endblock %}
-
-    {#
-        <button id="bidButton"
-            type="button"
-            class="btn btn-info"
-            data-placement="auto"
-            data-toggle="popover"
-            data-html="true"
-            title="Server's details"
-            data-content="{{ popoverContentTemplate|format(
-
-                playersButton
-                )|escape_attr }}">
-            Show
-        </button>
-    }#
