@@ -11,20 +11,30 @@
         width: 45px;
         height: 45px;
     }
-    
+
+    .fa-spinner
+    {
+        font-size: 34px;
+    }
+
     .table td, .table th
     {
         padding: .25rem;
     }
 
-    .max-lines 
+    .max-lines
     {
-      display: block; /* or inline-block */
-      text-overflow: ellipsis;
-      word-wrap: break-word;
-      overflow: hidden;
-      max-height: 3.6em;
-      line-height: 1.8em;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        overflow: hidden;    
+    }
+
+    .spanHost
+    {
+        display: inline-block;
+        line-height: 1.2rem;
+        height: 2.4rem;
+        overflow: hidden;
     }
 
 {% endblock %}
@@ -37,6 +47,7 @@ function getInfo(address, id) {
         'method': 'POST',
         'data': { ip : address, {{ this.security.getTokenKey() }} : '{{ this.security.getToken() }}' },
         'dataType': 'json',
+        'cache': false,
     }).done(function(data) {
         console.log(data);
        
@@ -75,7 +86,7 @@ function getInfo(address, id) {
             dataArr["players"] = data.server.players + '/' + data.server.maxplayers;
         }
 
-        idArr.forEach( function(value){
+        idArr.forEach(function(value) {
             $('#' + value + id).html(timeout ? '' : dataArr[value]);
 
             if (value == 'host')
@@ -88,11 +99,39 @@ function getInfo(address, id) {
 {% endblock %}
 
 {% block content %}
-
+    
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Recipient:</label>
+                <input type="text" class="form-control" id="recipient-name">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Message:</label>
+                <textarea class="form-control" id="message-text"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Send message</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <table class="table table-striped table-hover table-sm table-responsive-sm">
         <thead class="thead-dark" id="theader">
-            <tr >
+            <tr>
                 <th>Mod</th>
                 <th>VAC</th>
                 <th>OS</th>
@@ -118,29 +157,18 @@ function getInfo(address, id) {
                         <i class="fa fa-spinner fa-spin" style="font-size: 34px;"></i>
                     </td>
                     <td id="pass{{index}}">
-                        <i class="fa fa-spinner fa-spin" style="font-size: 34px;"></i>
+                        <i class="fa fa-spinner fa-spin" ></i>
                     </td>
-                    <td id="host{{index}}" class="max-lines" data-toggle="tooltip">
-                        <i class="fa fa-spinner fa-spin" style="font-size: 34px;"></i>
+                    <td data-toggle="tooltip">
+                        <span id="host{{index}}" class="spanHost"><i class="fa fa-spinner fa-spin"></i></span>
                     </td>
                     <td id="players{{index}}">
                         <i class="fa fa-spinner fa-spin" style="font-size: 34px;"></i>
                     </td>
                     <td id="btn{{index}}">
                         {% set playersButton = '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#playersModal{{ index }}">Players</button>' %}
-                        <button id="bidButton"
-                            type="button"
-                            class="btn btn-info"
-                            data-placement="auto"
-                            data-toggle="popover"
-                            data-html="true"
-                            title="Server's details"
-                            data-content="{{ popoverContentTemplate|format(
-
-                                playersButton
-                                )|escape_attr }}">
-                            Show
-                        </button>
+                        
+                        <button id="bidButton" type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Show</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -148,3 +176,19 @@ function getInfo(address, id) {
     </table>    
 
     {% endblock %}
+
+    {#
+        <button id="bidButton"
+            type="button"
+            class="btn btn-info"
+            data-placement="auto"
+            data-toggle="popover"
+            data-html="true"
+            title="Server's details"
+            data-content="{{ popoverContentTemplate|format(
+
+                playersButton
+                )|escape_attr }}">
+            Show
+        </button>
+    }#
