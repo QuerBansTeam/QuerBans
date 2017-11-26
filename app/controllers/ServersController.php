@@ -26,14 +26,15 @@ class ServersController extends ControllerBase {
 
         if ($this->request->isPost() && $this->request->isAjax() && $this->security->checkToken(null, null, false)) {
             $ip = $this->request->getPost('ip');
+            $type = $this->request->getPost('type', null, 0x7);
 
             $portPos = strpos($ip, ':');
             try {
                 $ServerInfo = new ServerQuery(substr($ip, 0, $portPos), intval(substr($ip, $portPos + 1)));
                 return $this->response->setJsonContent([
-                    "server" => $ServerInfo->getServerInfo(),
-                    "players" => $ServerInfo->getPlayers(),
-                    "rules" => $ServerInfo->getRules(),
+                    "server" => ($type & 0x01) ? $ServerInfo->getServerInfo() : [],
+                    "players" => ($type & 0x02) ? $ServerInfo->getPlayers() : [],
+                    "rules" => ($type & 0x04) ? $ServerInfo->getRules() : [],
                 ]);
             } catch(Exception $e) {
                 $error = $e->getMessage();
