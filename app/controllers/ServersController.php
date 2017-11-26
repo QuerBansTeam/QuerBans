@@ -30,14 +30,21 @@ class ServersController extends ControllerBase {
             $portPos = strpos($ip, ':');
             try {
                 $ServerInfo = new ServerQuery(substr($ip, 0, $portPos), intval(substr($ip, $portPos + 1)));
-                echo json_encode([
+                return $this->response->setJsonContent([
                     "server" => $ServerInfo->getServerInfo(),
                     "players" => $ServerInfo->getPlayers(),
                     "rules" => $ServerInfo->getRules(),
                 ]);
             } catch(Exception $e) {
-                echo json_encode([
-                    "error" => $e->getMessage(),
+                $error = $e->getMessage();
+                if (strpos($error, 'Header mismatch') !== false) {
+                    $error = "Unsupported reply format: $ip";
+                } else if (strpos($error, 'Server timeout') !== false) {
+                    $error = "Server timeout: $ip";
+                }
+
+                return $this->response->setJsonContent([
+                    "error" => $error,
                 ]);
             }
         }
