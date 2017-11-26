@@ -15,19 +15,22 @@ function sec_to_str(int $duration) : string  {
     foreach ($periods as $name => $dur) {
         $div = floor($duration / $dur);
 
-        if (!$div)
+        if (!$div) {
             continue;
-        else
+        } else {
             $parts[] = "$div $name" . (($div != 1) ? 's' : '');
+        }
+
         $duration %= $dur;
     }
 
     $last = array_pop($parts);
 
-    if (empty($parts))
+    if (empty($parts)) {
         return $last;
-    else
+    } else {
         return join(', ', $parts) . " and $last";
+    }
 }
 
 function getCountryIsoCode(string $ip) : string {
@@ -86,8 +89,7 @@ function getAllowedToBeDisplayedPages(int $start_page, int $pages_allow, int $la
 
     $left = $right = $pages_allow / 2;
 
-    if ($start_page - $left < 0)
-    {
+    if ($start_page - $left < 0) {
         $right += abs($start_page - $left);
         //Result is negative, so it's actually subtraction
         $left += $start_page - $left;
