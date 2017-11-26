@@ -27,6 +27,10 @@ class AdminlistController extends ControllerBase {
                 continue;
             }
 
+            if ($adminToServer->server === false) {
+                continue;
+            }
+
             $steamId = $adminToServer->admin->steamid;
             if ($steamId) {
                 $steamId64 = SteamID2ToSteamID64($steamId);
