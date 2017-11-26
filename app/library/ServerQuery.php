@@ -25,8 +25,8 @@ class ServerQuery {
 
         socket_connect($this->_socket, $ip, $port);
         socket_set_option($this->_socket, SOL_SOCKET, SO_RCVTIMEO, [
-            "sec" => 1,
-            "usec" => 500000,
+            "sec" => 3,
+            "usec" => 0,
         ]);
     }
 
@@ -42,41 +42,38 @@ class ServerQuery {
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
-            throw new Exception('Server timed out');
+            throw new Exception('Server Info: Server timeout');
         }
 
         $this->_implodePacketsPayloadsIfSplitted();
 
         $serverInfo = [];
-        try {
-            if ($this->_getByte() !== 0x49) {
-                throw new Exception('Header mismatch');
+
+        if ($this->_getByte() !== 0x49) {
+            throw new Exception('Server info: Header mismatch');
+        }
+
+        $serverInfo['protocol'] = $this->_getByte();
+        $serverInfo['name'] = $this->_getString();
+        $serverInfo['map'] = $this->_getString();
+        $serverInfo['folder'] = $this->_getString();
+        $serverInfo['game'] = $this->_getString();
+        $serverInfo['gameid'] = $this->_getShort();
+        $serverInfo['players'] = $this->_getByte();
+        $serverInfo['maxplayers'] = $this->_getByte();
+        $serverInfo['bots'] = $this->_getByte();
+        $serverInfo['type'] = chr($this->_getByte());
+        $serverInfo['os'] = chr($this->_getByte());
+        $serverInfo['password'] = $this->_getByte();
+        $serverInfo['vac'] = $this->_getByte();
+        $serverInfo['version'] = $this->_getString();
+
+        if ($this->_currentPos < $this->_recievedLen) {
+            $edf = $this->_getByte();
+
+            if ($edf & 0x80) {
+                $serverInfo['port'] = $this->_getShort();
             }
-            $serverInfo['protocol'] = $this->_getByte();
-            $serverInfo['name'] = $this->_getString();
-            $serverInfo['map'] = $this->_getString();
-            $serverInfo['folder'] = $this->_getString();
-            $serverInfo['game'] = $this->_getString();
-            $serverInfo['gameid'] = $this->_getShort();
-            $serverInfo['players'] = $this->_getByte();
-            $serverInfo['maxplayers'] = $this->_getByte();
-            $serverInfo['bots'] = $this->_getByte();
-            $serverInfo['type'] = chr($this->_getByte());
-            $serverInfo['os'] = chr($this->_getByte());
-            $serverInfo['password'] = $this->_getByte();
-            $serverInfo['vac'] = $this->_getByte();
-            $serverInfo['version'] = $this->_getString();
-
-            if ($this->_currentPos < $this->_recievedLen) {
-                $edf = $this->_getByte();
-
-                if ($edf & 0x80) {
-                    $serverInfo['port'] = $this->_getShort();
-                }
-            }
-
-        } catch (Exception $e) {
-            $serverInfo['error'] = $e->getMessage();
         }
 
         return $serverInfo;
@@ -89,28 +86,24 @@ class ServerQuery {
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
-            throw new Exception('Server timed out');
+            throw new Exception('Server timeout');
         }
 
         $this->_implodePacketsPayloadsIfSplitted();
 
         $playersInfo = [];
-        try {
-            if ($this->_getByte() !== 0x44) {
-                throw new Exception('Header mismatch');
-            }
-            $playersNum = $playersInfo['playersnum'] = $this->_getByte();
+        if ($this->_getByte() !== 0x44) {
+            throw new Exception('Server players: Header mismatch');
+        }
+        $playersNum = $playersInfo['playersnum'] = $this->_getByte();
 
-            if ($playersNum) {
-                for ($i = 0; $i < $playersNum; $i++) {
-                    $playerId = $this->_getByte();
-                    $playersInfo['players'][$playerId]['name'] = $this->_getString();
-                    $playersInfo['players'][$playerId]['score'] = $this->_getLong();
-                    $playersInfo['players'][$playerId]['time'] = round($this->_getFloat(), 0, PHP_ROUND_HALF_DOWN);
-                }
+        if ($playersNum) {
+            for ($i = 0; $i < $playersNum; $i++) {
+                $playerId = $this->_getByte();
+                $playersInfo['players'][$playerId]['name'] = $this->_getString();
+                $playersInfo['players'][$playerId]['score'] = $this->_getLong();
+                $playersInfo['players'][$playerId]['time'] = round($this->_getFloat(), 0, PHP_ROUND_HALF_DOWN);
             }
-        } catch (Exception $e) {
-            $playersInfo['error'] = $e->getMessage();
         }
         return $playersInfo;
     }
@@ -122,25 +115,21 @@ class ServerQuery {
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
-            throw new Exception('Server timed out');
+            throw new Exception('Server timeout');
         }
 
         $this->_implodePacketsPayloadsIfSplitted();
 
         $rulesInfo = [];
-        try {
-            if ($this->_getByte() !== 0x45) {
-                throw new Exception('Header mismatch');
-            }
-            $rulesNum = $rulesInfo['rulesnum'] = $this->_getShort();
+        if ($this->_getByte() !== 0x45) {
+            throw new Exception('Server rules: Header mismatch');
+        }
+        $rulesNum = $rulesInfo['rulesnum'] = $this->_getShort();
 
-            if ($rulesNum) {
-                for ($i = 0; $i < $rulesNum; $i++) {
-                    $rulesInfo['rules'][$this->_getString()] = $this->_getString();
-                }
+        if ($rulesNum) {
+            for ($i = 0; $i < $rulesNum; $i++) {
+                $rulesInfo['rules'][$this->_getString()] = $this->_getString();
             }
-        } catch (Exception $e) {
-            $rulesInfo['error'] = $e->getMessage();
         }
         return $rulesInfo;
     }
@@ -217,14 +206,16 @@ class ServerQuery {
         $challengeNumber = $this->_currentPos = 0;
         $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
 
-        if ($this->_getLong() === -1) {
-            if ($this->_getByte() === 0x41) {
-                $challengeNumber = $this->_getLong();
-            } else {
-                throw new Exception('Header mismatch');
-            }
+        if (!$this->_recievedLen) {
+            throw new Exception('Server timeout');
+        }
+
+        $this->_implodePacketsPayloadsIfSplitted();
+
+        if ($this->_getByte() === 0x41) {
+            $challengeNumber = $this->_getLong();
         } else {
-            throw new Exception('Challenge number packet response is splitted');
+            throw new Exception('Get challenge: Header mismatch');
         }
 
         return $challengeNumber;
@@ -245,8 +236,13 @@ class ServerQuery {
                 $this->_currentPos = 0;
                 $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
 
+                if (!$this->_recievedLen) {
+                    throw new Exception('Server timeout');
+                }
+
+                //Skip non splitted packet
                 if ($this->_getLong() !== -2) {
-                    throw new Exception('Got non splitted packet while expecting splitted one');
+                    continue;
                 }
 
                 if ($this->_getLong() === $requestId) {
