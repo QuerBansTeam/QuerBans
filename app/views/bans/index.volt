@@ -128,9 +128,16 @@
                 <td>
                     {% set serverHostname = ban.server ? ban.server.hostname : 'website' %}
                     {% set banId = ban.getId() %}
-                    {% set unbanButton = isBanned ? '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#unbanModal%d">Unban</button>'|format(banId) : '' %}
-                    {% set editButton = '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal%d">Edit</button>'|format(banId) %}
-                    {% set deleteButton = '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal%d">Delete</button>'|format(banId) %}
+                    {% set unbanButton = '' %}
+                    {% set editButton = '' %}
+                    {% set deleteButton = '' %}
+
+                    {% if this.session.has('username') %}
+                        {% set unbanButton = isBanned ? '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#unbanModal%d">Unban</button>'|format(banId) : '' %}
+                        {% set editButton = '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal%d">Edit</button>'|format(banId) %}
+                        {% set deleteButton = '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal%d">Delete</button>'|format(banId) %}
+                    {% endif %}
+                    
                     <button id="bidButton{{ banId }}"
                         type="button"
                         class="btn btn-info"
