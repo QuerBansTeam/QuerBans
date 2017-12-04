@@ -10,42 +10,39 @@
         {{ stylesheet_link('css/font-awesome.min.css') }}
         {{ javascript_include('js/jquery-3.2.1.min.js') }}
         {{ javascript_include('js/bootstrap.bundle.min.js') }}
-        <style type="text/css"> {% block style %}{% endblock %} </style>
-        <script type="text/javascript"> {% block script %}{% endblock %} </script>
+        <style type="text/css">{% block style %}{% endblock %}</style>
+        <script type="text/javascript">{% block script %}{% endblock %}</script>
     </head>
     <body>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="https://godskill.pl">GodSkill.pl</a>
+            <a class="navbar-brand" href="{{ url('') }}">QuerBans Inc.</a>
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         {{ link_to(url(''), '<i class="fa fa-home fa-lg" aria-hidden="true"></i> Home', 'class': 'nav-link') }}
                     </li>
                     {% if activePage !== "bans" %}
-                    <li class="nav-item">
+                        <li class="nav-item">
                     {% else %}
-                    <li class="nav-item active">
+                        <li class="nav-item active">
                     {% endif %}
                         {{ link_to(url('bans'), '<i class="fa fa-ban fa-lg" aria-hidden="true"></i> Ban list', 'class': 'nav-link') }}
                         {% if activePage === "bans" %}
-                        <span class="sr-only">(current)</span>
+                            <span class="sr-only">(current)</span>
                         {% endif %}
                     </li>
                     {% if activePage !== "adminlist" %}
-                    <li class="nav-item">
+                        <li class="nav-item">
                     {% else %}
-                    <li class="nav-item active">
+                        <li class="nav-item active">
                     {% endif %}
                         {{ link_to(url('adminlist'), '<i class="fa fa-users fa-lg" aria-hidden="true"></i> Admin list', 'class': 'nav-link') }}
                         {% if activePage === "adminlist" %}
-                        <span class="sr-only">(current)</span>
+                            <span class="sr-only">(current)</span>
                         {% endif %}
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/search"><i class="fa fa-search fa-lg" aria-hidden="true"></i> Search</a>
                     </li>
                     {% if activePage !== 'servers' %}
                     <li class="nav-item">
@@ -75,7 +72,7 @@
             {{ image('img/banner.png', 'class': 'img-fluid') }}
         </div>
         <div class="container">{% block content %}{% endblock %}</div>
-        <script>
+        <script type="text/javascript">
             $(function () {
                 $('[data-toggle="popover"]').popover();
                 $('[data-toggle="tooltip"]').tooltip();
@@ -87,6 +84,7 @@
                     }
                 });
             });
+            {% block latescript %}{% endblock %}
         </script>
     </body>
 
