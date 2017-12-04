@@ -9,8 +9,8 @@ class LoginController extends ControllerBase {
         $this->view->disable();
 
         if ($this->request->isPost()) {
-            $login      =   $this->request->getPost('login');
-            $password   =   $this->request->getPost('password');
+            $login = $this->request->getPost('login');
+            $password = $this->request->getPost('password');
 
             $user = Admins::findFirst([
                 "username" => $login,
