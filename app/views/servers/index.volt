@@ -61,9 +61,7 @@
 
 {% block script %}
 
-var intervalsIds = [];
-
-function getInfo(address, id, disabledButton = false) {
+function getInfo(address, id) {
     $.ajax({
         'url': '{{ url("servers/get") }}',
         'method': 'POST',
@@ -115,27 +113,6 @@ function getInfo(address, id, disabledButton = false) {
                 timeout ? $('#' + value + id).html('<b>' + data.error + '</b>') : $('#' + value + id).attr('data-original-title', dataArr[value]);
             }
         });
-
-        if (typeof intervalsIds[id] !== 'undefined') {
-            clearInterval(intervalsIds[id]);
-        }
-
-        if (timeout) {
-            $('#btnrefresh' + id).html('');
-        } else {
-            var disable = '';
-            var spin = '';
-
-            if (disabledButton) {
-                disable = ' disabled';
-                spin = ' fa-spin';
-                intervalsIds[id] = setInterval(function(address, id) {
-                    $('#btnrefresh' + id).html('<button type="button" class="btn btn-success" data-ip="' + address + '" data-id="' + id + '"><i class="fa fa-refresh"></i></button>');
-                }, 2000, address, id);
-            }
-            $('#btnrefresh' + id).html('<button type="button" class="btn btn-success" data-ip="' + address + '" data-id="' + id + '"' + disable + '><i class="fa fa-refresh' + spin + '"></i></button>');
-        }
-
     });
 }
 
@@ -224,6 +201,21 @@ function updatePlayers(address) {
 
 {% endblock %}
 
+{% block latescript %}
+
+    $('#infoModal').on('show.bs.modal', function (e) {
+        updateModal($(e.relatedTarget).data('id'));
+    });
+    $('#playerModal').on('show.bs.modal', function (e) {
+        updatePlayers($(e.relatedTarget).data('id'));
+        $('#infoModal').css('opacity', '0');
+    });
+    $('#playerModal').on('hide.bs.modal', function (e) {
+        $('#infoModal').css('opacity', '1');
+    });
+
+{% endblock %}
+
 {% block content %}
     <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="labelModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -298,29 +290,12 @@ function updatePlayers(address) {
                 <th>Server name</th>
                 <th>Players</th>
                 <th>Info</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
         {% for index, ip in ipArray %}
             <script type="text/javascript">
                 getInfo('{{ ip }}', {{ index }});
-
-                {% if loop.first %}
-                    $('#infoModal').on('show.bs.modal', function (e) {
-                        updateModal($(e.relatedTarget).data('id'));
-                    });
-                    $('#playerModal').on('show.bs.modal', function (e) {
-                        updatePlayers($(e.relatedTarget).data('id'));
-                        $('#infoModal').css('opacity', '0');
-                    });
-                    $('#playerModal').on('hide.bs.modal', function (e) {
-                        $('#infoModal').css('opacity', '1');
-                    });
-                    $('#playerModal').on('hide.bs.modal', function (e) {
-                        $('#infoModal').css('opacity', '1');
-                    });
-                {% endif %}
             </script>
             <tr id="row{{index}}">
                 <td id="game{{index}}">
@@ -338,8 +313,6 @@ function updatePlayers(address) {
                 </td>
                 <td id="btn{{index}}">
                 </td>
-                <td id="btnrefresh{{index}}">
-                </td>
             </tr>
         {% else %}
             <tr>
@@ -354,11 +327,4 @@ function updatePlayers(address) {
         {% endfor %}
         </tbody>
     </table>
-    <script type="text/javascript">
-        $("[id^=btnrefresh]").on('click', 'button', function (e) {
-            $(e.target).prop('disabled', true);
-            $(e.target).html('<i class="fa fa-refresh fa-spin"></i>');
-            getInfo($(e.target).data('ip'), $(e.target).data('id'), true);
-        });
-    </script>
 {% endblock %}
