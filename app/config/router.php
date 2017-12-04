@@ -47,4 +47,19 @@ $router->add('/servers/get', [
     "action" => 'get',
 ]);
 
+$router->add('/signin', [
+    "controller" => 'signin',
+    "action" => 'index',
+]);
+
+$router->add('/signin/login', [
+    "controller" => 'signin',
+    "action" => 'login',
+]);
+
+$router->add('/signin/logout', [
+    "controller" => 'signin',
+    "action" => 'logout',
+]);
+
 $router->handle();

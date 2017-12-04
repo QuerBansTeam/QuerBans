@@ -3,11 +3,17 @@
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\Query\Builder;
 
-class LoginController extends ControllerBase {
+class SigninController extends ControllerBase {
+
+    public function initialize() {
+        $this->view->activePage = 'signin';
+    }
+
+    public function indexAction() {
+
+    }
 
     public function loginAction() {
-        $this->view->disable();
-
         if ($this->request->isPost()) {
             $login = $this->request->getPost('login');
             $password = $this->request->getPost('password');
@@ -19,12 +25,20 @@ class LoginController extends ControllerBase {
             if ($user) {
                 if ($this->security->checkHash($password, $user->password)) {
                     $this->session->set('username', $login);
+                    $this->response->redirect();
+                    return;
                 }
             } else {
                 $this->security->hash(rand());
             }
         }
-        $this->response->redirect();
+        $this->dispatcher->forward([
+            "controller" => 'signin',
+            "action" => 'index',
+            "params" => [
+                "failed" => 1,
+            ]
+        ]);
     }
 
     public function logoutAction() {

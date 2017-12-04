@@ -56,15 +56,10 @@
                     </li>
                 </ul>
                 {% if this.session.has('username') %}
-                    <a href="/login/logout" class="btn btn-outline-danger" role="button"><i class="fa fa-sign-out" aria-hidden="true"></i>
+                    <a href="{{ url('signin/logout') }}" class="btn btn-outline-danger" role="button"><i class="fa fa-sign-out" aria-hidden="true"></i>
  Log out {{ this.session.get('username') }}</a>
                 {% else %}
-                    <form class="form-inline my-2 my-lg-0" action="/login/login" method="post">
-                        <input class="form-control mr-sm-2" type="text" name="login" placeholder="login">
-                        <input class="form-control mr-sm-2" type="password" name="password" placeholder="password">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fa fa-sign-in" aria-hidden="true"></i>
- Log in</button>
-                    </form>
+                    <a href="{{ url('signin') }}" class="btn btn-outline-success" role="button"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
                 {% endif %}
             </div>
         </nav>
