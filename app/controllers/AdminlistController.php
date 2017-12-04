@@ -7,7 +7,6 @@ class AdminlistController extends ControllerBase {
 
     public function initialize() {
         $this->view->activePage = 'adminlist';
-        $this->view->pageTitle = 'Admin list';
     }
 
     public function indexAction() {

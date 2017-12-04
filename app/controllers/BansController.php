@@ -21,7 +21,6 @@ class BansController extends ControllerBase {
     public function initialize() {
 
         $this->view->activePage = 'bans';
-        $this->view->pageTitle = 'Ban list';
 
         $this->msgType = 0;
         $this->msgContent = '';
