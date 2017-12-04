@@ -54,20 +54,28 @@
     {{ super() }}
 
     {% if msgType is defined and msgContent is not empty %}
-    {% if msgType === 0 %}
-        <div class="alert alert-success"><strong>Success!</strong> {{ msgContent }}</div>
-    {% elseif msgType === 1 %}
-        <div class="alert alert-danger"><strong>Error!</strong>
-        {% if msgContent is iterable %}
-            {% for msg in msgContent %}
-                {{ msg }}
-                <br />
-            {% endfor %}
-        {% else %}
-            {{ msgContent }}
+        {% if msgType === 0 %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> {{ msgContent }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% elseif msgType === 1 %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Error!</strong>
+            {% if msgContent is iterable %}
+                {% for msg in msgContent %}
+                    {{ msg }}
+                    <br />
+                {% endfor %}
+            {% else %}
+                {{ msgContent }}
+            {% endif %}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         {% endif %}
-        </div>
-    {% endif %}
     {% endif %}
     <table class="table table-striped table-hover table-sm table-responsive-sm">
         <thead class="thead-dark" id="theader">
@@ -106,9 +114,9 @@
                     {{ ban.player_nick !== null ? ban.player_nick|e : '<i>Unknown</i>' }}
                     {% if isBanned !== true %}
                         {% if ban.unbanned != 1 %}
-                        <span class="badge badge-info">Expired</span>
+                            <span class="badge badge-info">Expired</span>
                         {% else %}
-                        <span class="badge badge-success">Unbanned</span>
+                            <span class="badge badge-success">Unbanned</span>
                         {% endif %}
                     {% endif %}
                 </td>
@@ -137,7 +145,7 @@
                         {% set editButton = '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal%d">Edit</button>'|format(banId) %}
                         {% set deleteButton = '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal%d">Delete</button>'|format(banId) %}
                     {% endif %}
-                    
+
                     <button id="bidButton{{ banId }}"
                         type="button"
                         class="btn btn-info"
@@ -150,7 +158,7 @@
                             ban.player_ip ? getCountryName(ban.player_ip)|capitalize : '<i>Unknown</i>',
                             ban.player_ip ? getCountryIsoCode(ban.player_ip) : 'clear',
                             ban.player_id ? ban.player_id : '<i>None</i>',
-                            ban.player_ip ? ban.player_ip : '<i>None</i>',
+                            this.session.has('username') ? ban.player_ip ? ban.player_ip : '<i>None</i>' : '<i>Hidden</i>',
                             ban.reason,
                             strftime('%G-%m-%d %T', ban.getCreatedTime()),
                             ban.length != 0 ? strftime('%G-%m-%d %T', ban.getCreatedTime() + ban.length * 60) : 'Permament',
@@ -184,7 +192,7 @@
                             {{ form('bans/' ~ name ~ '/' ~ ban.getId(), 'method': 'post') }}
                                 {{ hidden_field('csrf', 'name': key, 'value': token) }}
                                 {{ submit_button(button_title, 'class': 'btn btn-primary') }}
-                            {{ endForm() }}
+                            {{ end_form() }}
                         </div>
                     </div>
                 </div>
@@ -253,7 +261,7 @@
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                 {{ currentEditModal.render('Save') }}
                                 {{ hidden_field('csrf' ~ banId, 'name': _tokenKey, 'value': _tokenValue) }}
-                            {{ endForm() }}
+                            {{ end_form() }}
                         </div>
                     </div>
                 </div>
