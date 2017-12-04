@@ -16,6 +16,7 @@ $loader->registerFiles(
     [
         '../app/library/Utils.php',
         '../app/vendor/autoload.php',
+        '../app/library/ServerQuery.php',
     ]
 );
 

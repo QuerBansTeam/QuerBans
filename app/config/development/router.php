@@ -37,4 +37,29 @@ $router->add('/adminlist', [
     "action" => 'index',
 ]);
 
+$router->add('/servers', [
+    "controller" => 'servers',
+    "action" => 'index',
+]);
+
+$router->add('/servers/get', [
+    "controller" => 'servers',
+    "action" => 'get',
+]);
+
+$router->add('/signin', [
+    "controller" => 'signin',
+    "action" => 'index',
+]);
+
+$router->add('/signin/login', [
+    "controller" => 'signin',
+    "action" => 'login',
+]);
+
+$router->add('/signin/logout', [
+    "controller" => 'signin',
+    "action" => 'logout',
+]);
+
 $router->handle();
