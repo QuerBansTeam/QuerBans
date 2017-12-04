@@ -37,7 +37,7 @@ class ServerQuery {
     }
 
     public function getServerInfo() : array {
-        socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_INFO, 'Source Engine Query'));
+        socket_write($this->_socket, pack('ccccca*', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_INFO, "Source Engine Query\0"));
         $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
         $this->_currentPos = 0;
 
@@ -99,10 +99,10 @@ class ServerQuery {
 
         if ($playersNum) {
             for ($i = 0; $i < $playersNum; $i++) {
-                $playerId = $this->_getByte();
-                $playersInfo['players'][$playerId]['name'] = $this->_getString();
-                $playersInfo['players'][$playerId]['score'] = $this->_getLong();
-                $playersInfo['players'][$playerId]['time'] = round($this->_getFloat(), 0, PHP_ROUND_HALF_DOWN);
+                $playersInfo['players'][$i]['id'] = $this->_getByte(); //Seems to be always 0
+                $playersInfo['players'][$i]['name'] = $this->_getString();
+                $playersInfo['players'][$i]['score'] = $this->_getLong();
+                $playersInfo['players'][$i]['time'] = round($this->_getFloat(), 0, PHP_ROUND_HALF_DOWN);
             }
         }
         return $playersInfo;
