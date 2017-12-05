@@ -59,7 +59,11 @@
                     <a href="{{ url('signin/logout') }}" class="btn btn-outline-danger" role="button"><i class="fa fa-sign-out" aria-hidden="true"></i>
  Log out {{ this.session.get('username') }}</a>
                 {% else %}
-                    <a href="{{ url('signin') }}" class="btn btn-outline-success" role="button"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
+                    {% if activePage !== 'signin' %}
+                        <a href="{{ url('signin') }}" class="btn btn-outline-success" role="button"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
+                    {% else %}
+                        <a href="{{ url('signin') }}" class="btn btn-success" role="button"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </nav>
