@@ -19,7 +19,7 @@ class SigninController extends ControllerBase {
             $password = $this->request->getPost('password');
 
             $user = Admins::findFirst([
-                "username" => $login,
+                "username = '$login'",
             ]);
 
             if ($user) {
