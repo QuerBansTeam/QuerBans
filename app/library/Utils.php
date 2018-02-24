@@ -156,3 +156,7 @@ function IsValidIp(string $ip) : bool {
     }
     return true;
 }
+
+function Is32Bit() : bool {
+    return PHP_INT_SIZE === 4;
+}
