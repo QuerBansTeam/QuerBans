@@ -8,7 +8,7 @@
         <title>QuerBans - {% block title %}{% endblock %}</title>
         {{ stylesheet_link('css/bootstrap.min.css') }}
         {{ javascript_include('js/fontawesome-all.min.js') }}
-        {{ javascript_include('js/jquery-3.2.1.min.js') }}
+        {{ javascript_include('js/jquery-3.3.1.min.js') }}
         {{ javascript_include('js/bootstrap.bundle.min.js') }}
         <style type="text/css">{% block style %}{% endblock %}</style>
         <script type="text/javascript">{% block script %}{% endblock %}</script>
