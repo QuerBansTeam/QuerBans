@@ -71,27 +71,24 @@
             {{ image('img/banner.png', 'class': 'img-fluid') }}
         </div>
         <div class="container">{% block content %}{% endblock %}</div>
-        <script type="text/javascript">
-            $(function () {
-                $('[data-toggle="popover"]').popover();
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-            $('body').on('click', function (e) {
-                $('[data-toggle="popover"]').each(function () {
-                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                        $(this).popover('hide');
-                    }
-                });
-            });
-            {% block latescript %}{% endblock %}
-        </script>
     </body>
-
-    {#
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        $('body').on('click', function (e) {
+            $('[data-toggle="popover"]').each(function () {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+        {% block latescript %}{% endblock %}
+    </script>
     <footer class="footer">
         <div style="background-color: #efeae1;" class="container-fluid text-center text-muted">
-            <strong>QuerBans</strong> by <strong>Amaroq</strong>  <a href="https://github.com/Amaroq7" target="_blank"><img src="/img/github.png" width="25px" height="25px" alt="GitHub Account"></a>
+            <strong>QuerBans</strong> by <strong>QuerBans Team</strong>  <a href="https://github.com/QuerBansTeam/QuerBans" target="_blank"><img src="{{ url('img/github.png') }}" width="25px" height="25px" alt="GitHub Repository"></a>
         </div>
     </footer>
-    #}
 </html>
