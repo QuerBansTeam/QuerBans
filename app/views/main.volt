@@ -14,7 +14,7 @@
         <script type="text/javascript">{% block script %}{% endblock %}</script>
     </head>
     <body>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
