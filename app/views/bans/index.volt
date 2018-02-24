@@ -4,6 +4,7 @@
     .popover
     {
         display: table;
+        z-index: 1; /* makes popover to show under navbar */
     }
 {% endblock %}
 
