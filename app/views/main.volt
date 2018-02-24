@@ -22,47 +22,35 @@
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        {{ link_to(url(''), '<i class="fas fa-home fa-fw" aria-hidden="true"></i> Home', 'class': 'nav-link') }}
+                        {{ link_to(url(''), '<i class="fas fa-home fa-fw"></i> Home', 'class': 'nav-link') }}
                     </li>
-                    {% if activePage !== "bans" %}
-                        <li class="nav-item">
-                    {% else %}
-                        <li class="nav-item active">
-                    {% endif %}
-                        {{ link_to(url('bans'), '<i class="fas fa-ban fa-fw" aria-hidden="true"></i> Ban list', 'class': 'nav-link') }}
+                    <li class="nav-item {{ activePage === 'bans' ? 'active' : '' }}">
+                        {{ link_to(url('bans'), '<i class="fas fa-ban fa-fw"></i> Ban list', 'class': 'nav-link') }}
                         {% if activePage === "bans" %}
                             <span class="sr-only">(current)</span>
                         {% endif %}
                     </li>
-                    {% if activePage !== "adminlist" %}
-                        <li class="nav-item">
-                    {% else %}
-                        <li class="nav-item active">
-                    {% endif %}
-                        {{ link_to(url('adminlist'), '<i class="fas fa-users fa-fw" aria-hidden="true"></i> Admin list', 'class': 'nav-link') }}
+                    <li class="nav-item {{ activePage === 'adminlist' ? 'active' : '' }}">
+                        {{ link_to(url('adminlist'), '<i class="fas fa-users fa-fw"></i> Admin list', 'class': 'nav-link') }}
                         {% if activePage === "adminlist" %}
                             <span class="sr-only">(current)</span>
                         {% endif %}
                     </li>
-                    {% if activePage !== 'servers' %}
-                    <li class="nav-item">
-                    {% else %}
-                    <li class="nav-item active">
-                    {% endif %}
-                        {{ link_to(url('servers'), '<i class="fas fa-server fa-fw" aria-hidden="true"></i> Servers', 'class': 'nav-link') }}
+                    <li class="nav-item {{ activePage === 'servers' ? 'active' : '' }}">
+                        {{ link_to(url('servers'), '<i class="fas fa-server fa-fw"></i> Servers', 'class': 'nav-link') }}
                         {% if activePage === "adminlist" %}
                         <span class="sr-only">(current)</span>
                         {% endif %}
                     </li>
                 </ul>
                 {% if this.session.has('username') %}
-                    <a href="{{ url('signin/logout') }}" class="btn btn-outline-danger" role="button"><i class="fas fa-sign-out-alt fa-fw" aria-hidden="true"></i>
- Log out {{ this.session.get('username') }}</a>
+                    <a href="{{ url('admin') }}" class="btn btn-light" role="button"><i class="fas fa-user fa-fw"></i> Admin Panel</a>&nbsp;
+                    <a href="{{ url('signin/logout') }}" class="btn btn-outline-danger" role="button"><i class="fas fa-sign-out-alt fa-fw"></i> Log out {{ this.session.get('username') }}</a>
                 {% else %}
                     {% if activePage !== 'signin' %}
-                        <a href="{{ url('signin') }}" class="btn btn-outline-success" role="button"><i class="fas fa-sign-in-alt fa-fw" aria-hidden="true"></i> Login</a>
+                        <a href="{{ url('signin') }}" class="btn btn-outline-success" role="button"><i class="fas fa-sign-in-alt fa-fw"></i> Login</a>
                     {% else %}
-                        <a href="{{ url('signin') }}" class="btn btn-success" role="button"><i class="fas fa-sign-in-alt fa-fw" aria-hidden="true"></i> Login</a>
+                        <a href="{{ url('signin') }}" class="btn btn-success" role="button"><i class="fas fa-sign-in-alt fa-fw"></i> Login</a>
                     {% endif %}
                 {% endif %}
             </div>
