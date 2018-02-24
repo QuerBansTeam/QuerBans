@@ -76,7 +76,7 @@
     </script>
     <footer class="footer">
         <div style="background-color: #efeae1;" class="container-fluid text-center text-muted">
-            <strong>QuerBans</strong> by <strong>QuerBans Team</strong>  <a href="https://github.com/QuerBansTeam/QuerBans" target="_blank"><img src="{{ url('img/github.png') }}" width="25px" height="25px" alt="GitHub Repository"></a>
+            <strong>QuerBans</strong> by <strong>QuerBans Team</strong>  <a href="https://github.com/QuerBansTeam/QuerBans" target="_blank">{{ image('img/github.png', 'style': 'width: 20px; height: 20px;') }}</a>
         </div>
     </footer>
 </html>
