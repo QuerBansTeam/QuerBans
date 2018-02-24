@@ -1,17 +1,17 @@
-{% extends 'layout.volt' %}
+{% extends 'layouts/layout.volt' %}
 
 {% block title %}
     Admins list
 {% endblock %}
 
 {% block style %}
-    
+
     .btn
     {
         white-space: normal;
     }
 
-    .carousel-indicators-numbers li 
+    .carousel-indicators-numbers li
     {
       text-indent: 0;
       margin: 0 2px;
@@ -27,7 +27,7 @@
       cursor: pointer;
     }
 
-    .carousel-indicators-numbers li.active, .carousel-indicators-numbers li:hover 
+    .carousel-indicators-numbers li.active, .carousel-indicators-numbers li:hover
     {
       margin: 0 2px;
       width: 30px;

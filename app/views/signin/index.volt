@@ -1,4 +1,4 @@
-{% extends 'main.volt' %}
+{% extends 'layouts/layout.volt' %}
 
 {% block title %}
     Sign in

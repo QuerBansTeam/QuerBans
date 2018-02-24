@@ -1,4 +1,4 @@
-{% extends 'layout.volt' %}
+{% extends 'layouts/layout.volt' %}
 
 {% block title %}
     Servers list
