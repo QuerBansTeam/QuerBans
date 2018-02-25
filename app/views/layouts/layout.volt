@@ -37,7 +37,7 @@
 				</li>
 			</ul>
 			{% if this.session.has('username') %}
-				<a href="{{ url('admin') }}" class="btn btn-light" role="button"><i class="fas fa-user fa-fw"></i> Admin Panel</a>&nbsp;
+				<a href="{{ url('admin') }}" class="btn btn-light" role="button"><i class="fas fa-user-secret fa-fw"></i> Admin Panel</a>&nbsp;
 				<a href="{{ url('signin/logout') }}" class="btn btn-outline-danger" role="button"><i class="fas fa-sign-out-alt fa-fw"></i> Log out {{ this.session.get('username') }}</a>
 			{% else %}
 				{% if activePage !== 'signin' %}
