@@ -22,8 +22,8 @@
     .sidebar-sticky {
         position: -webkit-sticky;
         position: sticky;
-        top: 64px; /* Height of navbar */
-        height: calc(100vh - 64px);
+        top: 56px; /* Height of navbar */
+        height: calc(100vh - 56px);
         padding-top: .5rem;
         overflow-x: hidden;
         overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
