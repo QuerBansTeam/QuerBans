@@ -88,31 +88,6 @@
             </li>
         </ul>
     </nav>
-
-    {% if msgType is defined and msgContent is not empty %}
-        {% if msgType === 0 %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Success!</strong> {{ msgContent }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% elseif msgType === 1 %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Error!</strong>
-            {% if msgContent is iterable %}
-                {% for msg in msgContent %}
-                    {{ msg }}
-                    <br />
-                {% endfor %}
-            {% else %}
-                {{ msgContent }}
-            {% endif %}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% endif %}
-    {% endif %}
     <table class="table table-striped table-hover table-sm table-responsive-sm">
         <thead class="thead-dark" id="theader">
             <tr>

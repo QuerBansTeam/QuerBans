@@ -16,7 +16,10 @@
     <body>
         {% block navbar %}{% endblock %}
         {% block logo %}{% endblock %}
-        <div class="container">{% block content %}{% endblock %}</div>
+        <div class="container">
+            {% block alerts %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
     </body>
     <script>
         $(function () {
