@@ -16,7 +16,11 @@ use Phalcon\Security;
  * Shared configuration service
  */
 $di->setShared('config', function () {
-    return include APP_PATH . "/config/config.php";
+    $configDir = '/config/config.php';
+    if (DEVEL) {
+        $configDir = '/config/development/config.php';
+    }
+    return include APP_PATH . $configDir;
 });
 
 /**
@@ -53,6 +57,7 @@ $di->setShared('view', function () {
             $compiler->addFunction('strftime', 'strftime');
             $compiler->addFunction('getCountryIsoCode', 'getCountryIsoCode');
             $compiler->addFunction('getCountryName', 'getCountryName');
+            $compiler->addFunction('Is32Bit', 'Is32Bit');
 
             $compiler->addFilter('sec_to_str', function ($resolvedArgs, $resolvedExpr) {
                 return 'sec_to_str(' . $resolvedArgs . ');';

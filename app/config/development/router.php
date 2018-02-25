@@ -62,4 +62,9 @@ $router->add('/signin/logout', [
     "action" => 'logout',
 ]);
 
+$router->add('/admin', [
+    "controller" => 'admin',
+    "action" => 'index',
+]);
+
 $router->handle();
