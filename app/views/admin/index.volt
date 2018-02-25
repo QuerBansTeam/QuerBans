@@ -182,7 +182,13 @@
                                     <td>Present</td>
                                 {% else %}
                                     {# on 64 bit installations always passes #}
-                                    <td><i class="fas fa-check"></i></td>
+                                    <td>
+                                        {% if gmploaded === true %}
+                                            <i class="fas fa-check"></i>
+                                        {% else %}
+                                            Not present
+                                        {% endif %}
+                                    </td>
                                     <td>Not necessary</td>
                                 {% endif %}
                             </tr>
