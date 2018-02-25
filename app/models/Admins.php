@@ -12,12 +12,14 @@ class Admins extends Model
     protected $id;
     public $username;
     public $password;
-    public $web_access;
+    public $groupid;
     public $email;
     public $srv_access;
     public $flags;
     public $steamid;
     public $created;
+    public $sessionkey;
+    public $logged_ip;
 
     public function getId() {
         return $this->id;
