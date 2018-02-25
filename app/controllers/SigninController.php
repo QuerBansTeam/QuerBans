@@ -25,6 +25,9 @@ class SigninController extends ControllerBase {
             if ($user) {
                 if ($this->security->checkHash($password, $user->password)) {
                     $this->session->set('username', $login);
+                    $user->sessionkey = $this->security->getSessionToken();
+                    $user->logged_ip = $this->request->getClientAddress();
+                    $user->save();
                     $this->response->redirect();
                     return;
                 }
