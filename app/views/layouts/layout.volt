@@ -32,7 +32,7 @@
 				<li class="nav-item {{ activePage === 'servers' ? 'active' : '' }}">
 					{{ link_to(url('servers'), '<i class="fas fa-server fa-fw"></i> Servers', 'class': 'nav-link') }}
 					{% if activePage === "adminlist" %}
-					<span class="sr-only">(current)</span>
+						<span class="sr-only">(current)</span>
 					{% endif %}
 				</li>
 			</ul>

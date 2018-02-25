@@ -50,8 +50,9 @@
 
 {% endblock %}
 
-{% block content %}
 
+
+{% block content %}
     <nav aria-label="Pagination">
         <ul class="pagination pagination-sm justify-content-center">
             {% if page.first != page.current %}
