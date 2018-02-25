@@ -37,13 +37,13 @@
 				</li>
 			</ul>
 			{% if this.session.has('id') %}
-				<a href="{{ url('admin') }}" class="btn btn-light" role="button"><i class="fas fa-user-secret fa-fw"></i> Admin Panel</a>&nbsp;
-				<a href="{{ url('signin/logout') }}" class="btn btn-outline-danger" role="button"><i class="fas fa-sign-out-alt fa-fw"></i> Log out {{ this.session.get('username') }}</a>
+				{{ link_to(url('admin'), '<i class="fas fa-user-secret fa-fw"></i> Admin Panel', 'class': 'btn btn-light', 'role': 'button') }}&nbsp;
+				{{ link_to(url('signin/logout'), '<i class="fas fa-sign-out-alt fa-fw"></i> Log out ' ~ this.session.get('username'), 'class': 'btn btn-outline-danger', 'role': 'button') }}
 			{% else %}
 				{% if activePage !== 'signin' %}
-					<a href="{{ url('signin') }}" class="btn btn-outline-success" role="button"><i class="fas fa-sign-in-alt fa-fw"></i> Login</a>
+					{{ link_to(url('signin'), '<i class="fas fa-sign-in-alt fa-fw"></i> Sign in', 'class': 'btn btn-outline-success', 'role': 'button') }}
 				{% else %}
-					<a href="{{ url('signin') }}" class="btn btn-success" role="button"><i class="fas fa-sign-in-alt fa-fw"></i> Login</a>
+					{{ link_to(url('signin'), '<i class="fas fa-sign-in-alt fa-fw"></i> Sign in', 'class': 'btn btn-success', 'role': 'button') }}
 				{% endif %}
 			{% endif %}
 		</div>
