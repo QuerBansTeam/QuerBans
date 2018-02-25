@@ -24,9 +24,17 @@ class SigninController extends ControllerBase {
 
             if ($user) {
                 if ($this->security->checkHash($password, $user->password)) {
-                    $this->session->set('username', $login);
-                    $user->sessionkey = $this->security->getSessionToken();
-                    $user->logged_ip = $this->request->getClientAddress();
+
+                    // Generate session ID
+                    $ipAddress = $this->request->getClientAddress();
+                    $sessionId = hash('sha3-224', microtime() . $ipAddress);
+
+                    // Setup session
+                    $this->session->set('id', $sessionId);
+                    $this->session->set('username', $user->username);
+
+                    $user->sessionkey = $sessionId;
+                    $user->logged_ip = $ipAddress;
                     $user->save();
                     $this->response->redirect();
                     return;
@@ -47,7 +55,7 @@ class SigninController extends ControllerBase {
     public function logoutAction() {
         $this->view->disable();
 
-        if ($this->session->has('username')) {
+        if ($this->session->has('id')) {
             $this->session->destroy();
         }
         $this->response->redirect();
