@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <title>QuerBans - {% block title %}{% endblock %}</title>
+        <title>{% block title %}{% endblock %} - QuerBans</title>
         {{ stylesheet_link('css/bootstrap.min.css') }}
         {{ javascript_include('js/fontawesome-all.min.js') }}
         {{ javascript_include('js/jquery-3.3.1.min.js') }}
