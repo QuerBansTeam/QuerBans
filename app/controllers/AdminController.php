@@ -5,6 +5,23 @@ use Phalcon\Mvc\Model\Query\Builder;
 
 class AdminController extends ControllerBase {
 
+    public function beforeExecuteRoute($dispatcher) {
+        $sessionId = $this->session->get('id');
+        $user = Admins::findFirst([
+            "sessionkey = '$sessionId'"
+        ]);
+
+        if (intval($user->groupid) === 1)
+        {
+            $this->dispatcher->forward([
+                'controller' => 'index',
+                'action'     => 'index',
+            ]);
+
+            return false;
+        }
+    }
+
     public function initialize() {
         $this->view->activePage = 'admin';
         $this->view->activePageAdmin = 'index';
