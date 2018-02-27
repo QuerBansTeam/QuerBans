@@ -110,8 +110,10 @@ class ServerQuery {
 
     public function getRules() : array {
         $challengeNumber = $this->_getChallengeNumber(self::A2S_RULES);
-        socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_RULES, $challengeNumber));
-        $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        if ($challengeNumber !== -1) {
+            socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_RULES, $challengeNumber));
+            $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        }
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
@@ -210,10 +212,19 @@ class ServerQuery {
             throw new Exception('Server timeout');
         }
 
-        $this->_implodePacketsPayloadsIfSplitted();
+        /* Server responded with rules instead of giving challenge number
+         * when packet is splitted (-2) or packet is not splitted (-1) with header 'E'
+         */
+        if ($this->_getLong() === -2 && $request === self::A2S_RULES) {
+            return -1;
+        }
 
-        if ($this->_getByte() === 0x41) {
+        $header = $this->_getByte();
+
+        if ($header === 0x41) {
             $challengeNumber = $this->_getLong();
+        } else if ($header === 0x45) /* Got rules */ {
+            $challengeNumber = -1;
         } else {
             throw new Exception('Get challenge: Header mismatch');
         }
