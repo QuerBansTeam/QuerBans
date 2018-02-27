@@ -47,12 +47,22 @@ class ServerQuery {
 
         $this->_implodePacketsPayloadsIfSplitted();
 
-        $serverInfo = [];
+        $header = $this->_getByte();
 
-        if ($this->_getByte() !== 0x49) {
+        /* omit 47 protocol respond and try to read 48's one instead */
+        if ($header === 0x6D) {
+            $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+            $this->_currentPos = 0;
+
+            $this->_implodePacketsPayloadsIfSplitted();
+            $header = $this->_getByte();
+        }
+
+        if ($header !== 0x49) {
             throw new Exception('Server info: Header mismatch');
         }
 
+        $serverInfo = [];
         $serverInfo['protocol'] = $this->_getByte();
         $serverInfo['name'] = $this->_getString();
         $serverInfo['map'] = $this->_getString();
