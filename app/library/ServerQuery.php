@@ -81,8 +81,10 @@ class ServerQuery {
 
     public function getPlayers() : array {
         $challengeNumber = $this->_getChallengeNumber(self::A2S_PLAYER);
-        socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_PLAYER, $challengeNumber));
-        $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        if ($challengeNumber !== -1) {
+            socket_write($this->_socket, pack('cccccl', 0xFF, 0xFF, 0xFF, 0xFF, self::A2S_PLAYER, $challengeNumber));
+            $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+        }
         $this->_currentPos = 0;
 
         if (!$this->_recievedLen) {
@@ -212,10 +214,12 @@ class ServerQuery {
             throw new Exception('Server timeout');
         }
 
-        /* Server responded with rules instead of giving challenge number
-         * when packet is splitted (-2) or packet is not splitted (-1) with header 'E'
+        /* Server gave full respond instead of giving challenge number
+         * when packet is splitted (-2) or packet is not splitted (-1)
+         * with header 'E' for rules
+         * with header 'D' for players list
          */
-        if ($this->_getLong() === -2 && $request === self::A2S_RULES) {
+        if ($this->_getLong() === -2) {
             return -1;
         }
 
@@ -223,7 +227,7 @@ class ServerQuery {
 
         if ($header === 0x41) {
             $challengeNumber = $this->_getLong();
-        } else if ($header === 0x45) /* Got rules */ {
+        } else if ($header === 0x45 || $header === 0x44) /* Got rules or players list */ {
             $challengeNumber = -1;
         } else {
             throw new Exception('Get challenge: Header mismatch');
