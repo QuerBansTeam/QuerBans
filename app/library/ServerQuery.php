@@ -52,6 +52,12 @@ class ServerQuery {
         /* omit 47 protocol respond and try to read 48's one instead */
         if ($header === 0x6D) {
             $this->_recievedLen = @socket_recv($this->_socket, $this->_buffer, self::PACKET_SIZE, MSG_OOB);
+
+            // If there's only 47p response fail as we support only 48
+            if (!$this->_recievedLen) {
+                throw new Exception('Server info: Header mismatch');
+            }
+
             $this->_currentPos = 0;
 
             $this->_implodePacketsPayloadsIfSplitted();
