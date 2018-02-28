@@ -9,8 +9,12 @@ class SigninController extends ControllerBase {
         $this->view->activePage = 'signin';
     }
 
-    public function indexAction() {
+    public function afterExecuteRoute() {
+        $this->view->msgType = $this->dispatcher->hasParam('msgType') ? $this->dispatcher->getParam('msgType') : null;
+        $this->view->msgContent = $this->dispatcher->hasParam('msgContent') ? $this->dispatcher->getParam('msgContent') : null;
+    }
 
+    public function indexAction() {
     }
 
     public function loginAction() {
@@ -36,7 +40,16 @@ class SigninController extends ControllerBase {
                     $user->sessionkey = $sessionId;
                     $user->logged_ip = $ipAddress;
                     $user->save();
-                    $this->response->redirect();
+
+                    $this->dispatcher->forward([
+                        "controller" => 'index',
+                        "action" => 'index',
+                        "params" => [
+                            "msgType" => 0,
+                            "msgContent" => 'You have been logged in successfully!',
+                        ],
+                    ]);
+
                     return;
                 }
             } else {
@@ -47,17 +60,36 @@ class SigninController extends ControllerBase {
             "controller" => 'signin',
             "action" => 'index',
             "params" => [
-                "failed" => 1,
-            ]
+                "msgType" => 1,
+                "msgContent" => 'Wrong username or password!',
+            ],
         ]);
     }
 
     public function logoutAction() {
-        $this->view->disable();
+        if (!$this->session->has('id')) {
+            $this->dispatcher->forward([
+                "controller" => 'index',
+                "action" => 'index',
+                "params" => [
+                    "msgType" => 1,
+                    "msgContent" => 'You are not logged in!',
+                ],
+            ]);
 
-        if ($this->session->has('id')) {
-            $this->session->destroy();
+            return;
         }
-        $this->response->redirect();
+
+        $this->session->destroy();
+
+        $this->dispatcher->forward([
+            "controller" => 'index',
+            "action" => 'index',
+            "params" => [
+                "msgType" => 0,
+                "msgContent" => 'You have been logged out successfully!',
+            ],
+        ]);
+
     }
 }

@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block alerts %}
-	{% if msgType is defined and msgContent is not empty %}
+	{% if msgType !== null %}
 		{% if msgType === 0 %}
 			<div class="alert alert-success alert-dismissible fade show" role="alert">
 			<strong>Success!</strong>&nbsp;

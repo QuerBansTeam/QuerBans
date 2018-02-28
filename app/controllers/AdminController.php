@@ -24,6 +24,11 @@ class AdminController extends ControllerBase {
         return false;
     }
 
+    public function afterExecuteRoute() {
+        $this->view->msgType = $this->dispatcher->hasParam('msgType') ? $this->dispatcher->getParam('msgType') : null;
+        $this->view->msgContent = $this->dispatcher->hasParam('msgContent') ? $this->dispatcher->getParam('msgContent') : null;
+    }
+
     public function initialize() {
         $this->view->activePage = 'admin';
         $this->view->activePageAdmin = 'index';

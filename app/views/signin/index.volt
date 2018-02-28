@@ -91,9 +91,4 @@ html, body {
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
-    {% if this.dispatcher.getParam('failed') %}
-        <div class="alert alert-danger" role="alert">
-            Login failed!
-        </div>
-    {% endif %}
 {% endblock %}

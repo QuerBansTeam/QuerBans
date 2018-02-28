@@ -13,24 +13,19 @@ use Phalcon\Validation\Validator\Callback;
 use Phalcon\Validation\Validator\Regex as RegexValidator;
 
 class BansController extends ControllerBase {
-
-    private $msgType;
-    private $msgContent;
     private $currentPage;
 
     public function initialize() {
-
         $this->view->activePage = 'bans';
-
-        $this->msgType = 0;
-        $this->msgContent = '';
-
         $this->currentPage = $this->cookies->has('currentPage') ? $this->cookies->get('currentPage')->getValue() : 1;
+    }
 
+    public function afterExecuteRoute() {
+        $this->view->msgType = $this->dispatcher->hasParam('msgType') ? $this->dispatcher->getParam('msgType') : null;
+        $this->view->msgContent = $this->dispatcher->hasParam('msgContent') ? $this->dispatcher->getParam('msgContent') : null;
     }
 
     public function indexAction() {
-
         $qbConfig = Config::findFirst();
 
         $bans = Bans::find([
@@ -40,11 +35,6 @@ class BansController extends ControllerBase {
         $pageNum = (int)$this->dispatcher->getParam('page');
 
         $this->cookies->set('currentPage', $pageNum);
-
-        if ($this->dispatcher->hasParam('msgType')) {
-            $this->view->msgType = $this->dispatcher->getParam('msgType');
-            $this->view->msgContent = $this->dispatcher->getParam('msgContent');
-        }
 
         $bansToDisplay = new Model([
             "data" => $bans,
@@ -156,15 +146,16 @@ class BansController extends ControllerBase {
                 "id = $banId",
             ]);
 
+            $msgType = 0;
+            $msgContent = "Ban #$banId deleted!";
+
             if (!$ban) {
-                $this->msgType = 1;
-                $this->msgContent = 'Ban not found!';
+                $msgType = 1;
+                $msgContent = 'Ban not found!';
             } else {
                 if ($ban->delete() === false) {
-                    $this->msgType = 1;
-                    $this->msgContent = $ban->getMessages();
-                } else {
-                    $this->msgContent = "Ban #$banId deleted!";
+                    $msgType = 1;
+                    $msgContent = $ban->getMessages();
                 }
             }
         }
@@ -174,8 +165,8 @@ class BansController extends ControllerBase {
             "action" => 'index',
             "params" => [
                 "page" => $this->currentPage,
-                "msgType" => $this->msgType,
-                "msgContent" => $this->msgContent,
+                "msgType" => $msgType,
+                "msgContent" => $msgContent,
             ],
         ]);
     }
@@ -187,19 +178,20 @@ class BansController extends ControllerBase {
                 "id = $banId",
             ]);
 
+            $msgType = 0;
+            $msgContent = "Ban #$banId marked as unbanned!";
+
             if (!$ban) {
-                $this->msgType = 1;
-                $this->msgContent = 'Ban not found!';
+                $msgType = 1;
+                $msgContent = 'Ban not found!';
             } else {
                 $result = $ban->update([
                     "unbanned" => 1,
                 ]);
 
                 if (!$result) {
-                    $this->msgType = 1;
-                    $this->msgContent = $ban->getMessages();
-                } else {
-                    $this->msgContent = "Ban #$banId marked as unbanned!";
+                    $msgType = 1;
+                    $msgContent = $ban->getMessages();
                 }
 
                 /*$editInfo = new BansEdit();
@@ -219,8 +211,8 @@ class BansController extends ControllerBase {
             "action" => 'index',
             "params" => [
                 "page" => $this->currentPage,
-                "msgType" => $this->msgType,
-                "msgContent" => $this->msgContent,
+                "msgType" => $msgType,
+                "msgContent" => $msgContent,
             ],
         ]);
     }
@@ -232,9 +224,12 @@ class BansController extends ControllerBase {
                 "id = $banId",
             ]);
 
+            $msgType = 0;
+            $msgContent = "Ban #$banId has been successfully edited!";
+
             if (!$ban) {
-                $this->msgType = 1;
-                $this->msgContent = 'Ban not found!';
+                $msgType = 1;
+                $msgContent = 'Ban not found!';
             } else {
                 $results = $this->request->getPost();
 
@@ -250,14 +245,8 @@ class BansController extends ControllerBase {
                 $result = $ban->update($results);
 
                 if (!$result) {
-                    $this->msgType = 1;
+                    $msgType = 1;
                     $messages = $ban->getMessages();
-
-                    foreach ($messages as $message) {
-                        $this->msgContent[] = $message->getMessage();
-                    }
-                } else {
-                    $this->msgContent = "Ban #$banId has been successfully edited!";
                 }
             }
         }
@@ -266,8 +255,8 @@ class BansController extends ControllerBase {
             "action" => 'index',
             "params" => [
                 "page" => $this->currentPage,
-                "msgType" => $this->msgType,
-                "msgContent" => $this->msgContent,
+                "msgType" => $msgType,
+                "msgContent" => $msgContent,
             ],
         ]);
     }
