@@ -36,7 +36,7 @@
 					{% endif %}
 				</li>
 			</ul>
-			{% if this.session.get('loggedin') !== false %}
+			{% if this.session.get('loggedin') != false %}
 				{{ link_to(url('admin'), '<i class="fas fa-user-secret fa-fw"></i> Admin Panel', 'class': 'btn btn-light', 'role': 'button') }}&nbsp;
 				{{ link_to(url('signin/logout'), '<i class="fas fa-sign-out-alt fa-fw"></i> Log out ' ~ this.session.get('username'), 'class': 'btn btn-outline-danger', 'role': 'button') }}
 			{% else %}
