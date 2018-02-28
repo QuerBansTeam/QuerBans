@@ -18,6 +18,19 @@ class SigninController extends ControllerBase {
     }
 
     public function loginAction() {
+        /* User is currently logged in */
+        if ($this->session->has('id')) {
+            $this->dispatcher->forward([
+                "controller" => 'index',
+                "action" => 'index',
+                "params" => [
+                    "msgType" => 1,
+                    "msgContent" => 'You are currently logged in!',
+                ],
+            ]);
+            return;
+        }
+
         if ($this->request->isPost()) {
             $login = $this->request->getPost('login');
             $password = $this->request->getPost('password');
