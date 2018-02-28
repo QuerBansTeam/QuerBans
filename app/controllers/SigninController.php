@@ -50,9 +50,10 @@ class SigninController extends ControllerBase {
                     $this->session->set('id', $sessionId);
                     $this->session->set('username', $user->username);
 
-                    $user->sessionkey = $sessionId;
-                    $user->logged_ip = $ipAddress;
-                    $user->save();
+                    $user->update([
+                        "sessionkey" => $sessionId,
+                        "logged_ip" => $ipAddress,
+                    ]);
 
                     $this->dispatcher->forward([
                         "controller" => 'index',
