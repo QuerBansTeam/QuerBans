@@ -9,6 +9,11 @@ class ServersController extends ControllerBase {
         $this->view->activePage = 'servers';
     }
 
+    public function afterExecuteRoute() {
+        $this->view->msgType = $this->dispatcher->hasParam('msgType') ? $this->dispatcher->getParam('msgType') : null;
+        $this->view->msgContent = $this->dispatcher->hasParam('msgContent') ? $this->dispatcher->getParam('msgContent') : null;
+    }
+
     public function indexAction() {
         $serversEntries = ServerInfo::find();
         $serversIps = [];
