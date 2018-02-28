@@ -49,6 +49,7 @@ class SigninController extends ControllerBase {
                     // Setup session
                     $this->session->set('id', $sessionId);
                     $this->session->set('username', $user->username);
+                    $this->session->set('loggedin', true);
 
                     $user->update([
                         "sessionkey" => $sessionId,
@@ -94,7 +95,11 @@ class SigninController extends ControllerBase {
             return;
         }
 
+        /*
+         * Destroy session and set that user isn't logged in in a new session
+         */
         $this->session->destroy();
+        $this->session->set('loggedin', false);
 
         $this->dispatcher->forward([
             "controller" => 'index',
