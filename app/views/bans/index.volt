@@ -1,8 +1,7 @@
 {% extends 'layouts/layout.volt' %}
 
 {% block style %}
-    .popover
-    {
+    .popover {
         display: table;
         z-index: 1; /* makes popover to show under navbar */
     }
@@ -13,7 +12,6 @@
 {% endblock %}
 
 {% block script %}
-
     function validateForm(id) {
         $.ajax({
             'url': '{{ url("bans/validate") }}',
@@ -47,10 +45,7 @@
             }
         });
     }
-
 {% endblock %}
-
-
 
 {% block content %}
     <nav aria-label="Pagination">
