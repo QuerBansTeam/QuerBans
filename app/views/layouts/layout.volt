@@ -51,26 +51,29 @@
 {% endblock %}
 
 {% block alerts %}
-	{% if msgType !== null %}
-		{% if msgType === 0 %}
-			<div class="alert alert-success alert-dismissible fade show" role="alert">
-			<strong>Success!</strong>&nbsp;
-		{% elseif msgType === 1 %}
-			<div class="alert alert-danger alert-dismissible fade show" role="alert">
-			<strong>Error!</strong>&nbsp;
-		{% endif %}
-		{% if msgContent is iterable %}
-			{% for msg in msgContent %}
-				{{ msg }}
-				<br>
-			{% endfor %}
-		{% else %}
-			{{ msgContent }}
-		{% endif %}
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
+	{% if msgs is defined %}
+		{% for msg in msgs %}
+			{% if msg['type'] === 0 %}
+				<div class="alert alert-success {{ (msg['dismiss']) ? 'alert-dismissible fade show' : '' }}" role="alert">
+					<strong>Success!</strong>&nbsp;
+			{% elseif msg['type'] === 1 %}
+				<div class="alert alert-danger {{ (msg['dismiss']) ? 'alert-dismissible fade show' : '' }}" role="alert">
+					<strong>Error!</strong>&nbsp;
+			{% endif %}
+			{% if msg['content'] is iterable %}
+				{% for msgContent in msg['content'] %}
+					{{ msgContent ~ '<br>' }}
+				{% endfor %}
+			{% else %}
+				{{ msg['content'] }}
+			{% endif %}
+			{% if msg['dismiss'] %}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			{% endif %}
+			</div>
+		{% endfor %}
 	{% endif %}
 {% endblock %}
 

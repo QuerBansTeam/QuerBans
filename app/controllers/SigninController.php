@@ -20,15 +20,18 @@ class SigninController extends ControllerBase {
     public function loginAction() {
         /* User is currently logged in */
         if ($this->session->has('id')) {
-            $this->dispatcher->forward([
+
+            $msgs[0]["type"] = 1;
+            $msgs[0]["content"] = 'You are currently logged in!';
+            $msgs[0]["dismiss"] = true;
+
+            return $this->dispatcher->forward([
                 "controller" => 'index',
                 "action" => 'index',
                 "params" => [
-                    "msgType" => 1,
-                    "msgContent" => 'You are currently logged in!',
+                    "msgs" => $msgs,
                 ],
             ]);
-            return;
         }
 
         if ($this->request->isPost()) {
@@ -56,43 +59,50 @@ class SigninController extends ControllerBase {
                         "logged_ip" => $ipAddress,
                     ]);
 
-                    $this->dispatcher->forward([
+                    $msgs[0]["type"] = 0;
+                    $msgs[0]["content"] = 'You have been logged in successfully!';
+                    $msgs[0]["dismiss"] = true;
+
+                    return $this->dispatcher->forward([
                         "controller" => 'index',
                         "action" => 'index',
                         "params" => [
-                            "msgType" => 0,
-                            "msgContent" => 'You have been logged in successfully!',
+                            "msgs" => $msgs,
                         ],
                     ]);
-
-                    return;
                 }
             } else {
                 $this->security->hash(rand());
             }
         }
-        $this->dispatcher->forward([
+
+        $msgs[0]["type"] = 0;
+        $msgs[0]["content"] = 'You have been logged in successfully!';
+        $msgs[0]["dismiss"] = true;
+
+        return $this->dispatcher->forward([
             "controller" => 'signin',
             "action" => 'index',
             "params" => [
-                "msgType" => 1,
-                "msgContent" => 'Wrong username or password!',
+                "msgs" => $msgs,
             ],
         ]);
     }
 
     public function logoutAction() {
+        $msgs[0]["dismiss"] = true;
+
         if (!$this->session->has('id')) {
-            $this->dispatcher->forward([
+            $msgs[0]["type"] = 1;
+            $msgs[0]["content"] = 'You are currently logged out!';
+
+            return $this->dispatcher->forward([
                 "controller" => 'index',
                 "action" => 'index',
                 "params" => [
-                    "msgType" => 1,
-                    "msgContent" => 'You are not logged in!',
+                    "msgs" => $msgs,
                 ],
             ]);
-
-            return;
         }
 
         /*
@@ -101,12 +111,14 @@ class SigninController extends ControllerBase {
         $this->session->destroy();
         $this->session->set('loggedin', false);
 
-        $this->dispatcher->forward([
+        $msgs[0]["type"] = 0;
+        $msgs[0]["content"] = 'You have been logged out successfully!';
+
+        return $this->dispatcher->forward([
             "controller" => 'index',
             "action" => 'index',
             "params" => [
-                "msgType" => 0,
-                "msgContent" => 'You have been logged out successfully!',
+                "msgs" => $msgs,
             ],
         ]);
 

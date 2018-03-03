@@ -20,11 +20,6 @@ class BansController extends ControllerBase {
         $this->currentPage = $this->cookies->has('currentPage') ? $this->cookies->get('currentPage')->getValue() : 1;
     }
 
-    public function afterExecuteRoute() {
-        $this->view->msgType = $this->dispatcher->hasParam('msgType') ? $this->dispatcher->getParam('msgType') : null;
-        $this->view->msgContent = $this->dispatcher->hasParam('msgContent') ? $this->dispatcher->getParam('msgContent') : null;
-    }
-
     public function indexAction() {
         $qbConfig = Config::findFirst();
 
@@ -137,6 +132,10 @@ class BansController extends ControllerBase {
         $this->view->page = $page;
         $this->view->pagesToDisplay = getAllowedToBeDisplayedPages($pageNum, 9, $page->last);
         $this->view->editForms = $bansForms;
+
+        if ($this->dispatcher->hasParam('msgs')) {
+            $this->view->msgs = $this->dispatcher->getParam('msgs');
+        }
     }
 
     public function deleteAction() {
@@ -146,27 +145,49 @@ class BansController extends ControllerBase {
                 "id = $banId",
             ]);
 
-            $msgType = 0;
-            $msgContent = "Ban #$banId deleted!";
+            $msgs[0]["dismiss"] = true;
 
             if (!$ban) {
-                $msgType = 1;
-                $msgContent = 'Ban not found!';
-            } else {
-                if ($ban->delete() === false) {
-                    $msgType = 1;
-                    $msgContent = $ban->getMessages();
-                }
+                $msgs[0]["type"] = 1;
+                $msgs[0]["content"] = 'Ban not found!';
+
+                return $this->dispatcher->forward([
+                    "controller" => 'bans',
+                    "action" => 'index',
+                    "params" => [
+                        "page" => $this->currentPage,
+                        "msgs" => $msgs,
+                    ],
+                ]);
             }
+
+            if ($ban->delete() === false) {
+                $msgs[0]["type"] = 1;
+                $messages = $ban->getMessages();
+
+                foreach ($messages as $message) {
+                    $msgs[0]["content"][] = $message;
+                }
+            } else {
+                $msgs[0]["type"] = 0;
+                $msgs[0]["content"] = "Ban #$banId deleted!";
+            }
+
+            return $this->dispatcher->forward([
+                "controller" => 'bans',
+                "action" => 'index',
+                "params" => [
+                    "page" => $this->currentPage,
+                    "msgs" => $msgs,
+                ],
+            ]);
         }
 
-        $this->dispatcher->forward([
+        return $this->dispatcher->forward([
             "controller" => 'bans',
             "action" => 'index',
             "params" => [
                 "page" => $this->currentPage,
-                "msgType" => $msgType,
-                "msgContent" => $msgContent,
             ],
         ]);
     }
@@ -178,41 +199,64 @@ class BansController extends ControllerBase {
                 "id = $banId",
             ]);
 
-            $msgType = 0;
-            $msgContent = "Ban #$banId marked as unbanned!";
+            $msgs[0]["dismiss"] = true;
 
             if (!$ban) {
-                $msgType = 1;
-                $msgContent = 'Ban not found!';
-            } else {
-                $result = $ban->update([
-                    "unbanned" => 1,
+                $msgs[0]["type"] = 1;
+                $msgs[0]["content"] = 'Ban not found!';
+
+                return $this->dispatcher->forward([
+                    "controller" => 'bans',
+                    "action" => 'index',
+                    "params" => [
+                        "page" => $this->currentPage,
+                        "msgs" => $msgs,
+                    ],
                 ]);
-
-                if (!$result) {
-                    $msgType = 1;
-                    $msgContent = $ban->getMessages();
-                }
-
-                /*$editInfo = new BansEdit();
-                $editInfo->bid = $banId;
-                $editInfo->time = time();
-                $editInfo->admin_id = 1;
-                $editInfo->reason = '';
-                $editInfo->action = 'unban';
-
-                $editInfo->save();*/
             }
 
+            $msgs[0]["type"] = 0;
+            $msgs[0]["content"] = "Ban #$banId marked as unbanned!";
+
+            $result = $ban->update([
+                "unbanned" => 1,
+            ]);
+
+            if ($result === false) {
+                $msgs[0]["type"] = 1;
+                $messages = $ban->getMessages();
+
+                foreach ($messages as $message) {
+                    $msgs[0]["content"][] = $message;
+                }
+            } else {
+                $msgs[0]["type"] = 0;
+                $msgs[0]["content"] = "Ban #$banId deleted!";
+            }
+
+            /*$editInfo = new BansEdit();
+            $editInfo->bid = $banId;
+            $editInfo->time = time();
+            $editInfo->admin_id = 1;
+            $editInfo->reason = '';
+            $editInfo->action = 'unban';
+            $editInfo->save();*/
+
+            return $this->dispatcher->forward([
+                "controller" => 'bans',
+                "action" => 'index',
+                "params" => [
+                    "page" => $this->currentPage,
+                    "msgs" => $msgs,
+                ],
+            ]);
         }
 
-        $this->dispatcher->forward([
+        return $this->dispatcher->forward([
             "controller" => 'bans',
             "action" => 'index',
             "params" => [
                 "page" => $this->currentPage,
-                "msgType" => $msgType,
-                "msgContent" => $msgContent,
             ],
         ]);
     }
@@ -224,39 +268,59 @@ class BansController extends ControllerBase {
                 "id = $banId",
             ]);
 
-            $msgType = 0;
-            $msgContent = "Ban #$banId has been successfully edited!";
+            $msgs[0]["dismiss"] = true;
 
             if (!$ban) {
-                $msgType = 1;
-                $msgContent = 'Ban not found!';
-            } else {
-                $results = $this->request->getPost();
+                $msgs[0]["type"] = 1;
+                $msgs[0]["content"] = 'Ban not found!';
 
-                if ($this->request->getPost('ban')) {
-                    $results["created"] = time();
-                    $results["unbanned"] = 0;
-                }
-
-                if (!strlen($results['player_nick'])) {
-                    $results['player_nick'] = null;
-                }
-
-                $result = $ban->update($results);
-
-                if (!$result) {
-                    $msgType = 1;
-                    $messages = $ban->getMessages();
-                }
+                return $this->dispatcher->forward([
+                    "controller" => 'bans',
+                    "action" => 'index',
+                    "params" => [
+                        "page" => $this->currentPage,
+                        "msgs" => $msgs,
+                    ],
+                ]);
             }
+
+            $results = $this->request->getPost();
+
+            if ($this->request->hasPost('ban')) {
+                $results["created"] = time();
+                $results["unbanned"] = 0;
+            }
+
+            if (!strlen($results['player_nick'])) {
+                $results['player_nick'] = null;
+            }
+
+            if ($ban->update($results) === false) {
+                $msgs[0]["type"] = 1;
+                $messages = $ban->getMessages();
+
+                foreach ($messages as $message) {
+                    $msgs[0]["content"][] = $message;
+                }
+            } else {
+                $msgs[0]["type"] = 0;
+                $msgs[0]["content"] = "Ban #$banId has been successfully edited!";
+            }
+
+            return $this->dispatcher->forward([
+                "controller" => 'bans',
+                "action" => 'index',
+                "params" => [
+                    "page" => $this->currentPage,
+                    "msgs" => $msgs,
+                ],
+            ]);
         }
-        $this->dispatcher->forward([
+        return $this->dispatcher->forward([
             "controller" => 'bans',
             "action" => 'index',
             "params" => [
                 "page" => $this->currentPage,
-                "msgType" => $msgType,
-                "msgContent" => $msgContent,
             ],
         ]);
     }
