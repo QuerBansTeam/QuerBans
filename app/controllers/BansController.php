@@ -133,6 +133,22 @@ class BansController extends ControllerBase {
         $this->view->pagesToDisplay = getAllowedToBeDisplayedPages($pageNum, 9, $page->last);
         $this->view->editForms = $bansForms;
 
+        /*
+         * Get user's permissions
+         */
+        $this->view->canSeeIp = false;
+        $this->view->
+        $sessionId = $this->session->get('id');
+        $user = Admins::findFirst([
+            "sessionkey = '$sessionId'",
+        ]);
+
+        if ($user) {
+            if ($user->group->show_ip) {
+                $this->view->canSeeIp = true;
+            }
+        }
+
         if ($this->dispatcher->hasParam('msgs')) {
             $this->view->msgs = $this->dispatcher->getParam('msgs');
         }

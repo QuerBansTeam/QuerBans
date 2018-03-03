@@ -48,6 +48,32 @@
 {% endblock %}
 
 {% block content %}
+    {# Modal template for delete and unban actions #}
+    {%- macro ban_modal(ban, name, title, modal_content, button_title) %}
+    <div class="modal fade" id="{{ name }}Modal{{ ban.getId() }}" tabindex="-1" role="dialog" aria-labelledby="{{ name }}Modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="{{ name }}ModalTitle">{{ title }} <strong>{{ ban.player_nick|e }}</strong>  (#{{ ban.getId() }})</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ modal_content }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    {{ form('bans/' ~ name ~ '/' ~ ban.getId(), 'method': 'post') }}
+                        {{ hidden_field('csrf', 'name': this.security.getTokenKey(), 'value': this.security.getToken()) }}
+                        {{ submit_button(button_title, 'class': 'btn btn-primary') }}
+                    {{ end_form() }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {%- endmacro %}
+
     <nav aria-label="Pagination">
         <ul class="pagination pagination-sm justify-content-center">
             {% if page.first != page.current %}
@@ -97,8 +123,6 @@
             </tr>
         </thead>
         <tbody>
-        {% set _tokenKey = this.security.getTokenKey() %}
-        {% set _tokenValue = this.security.getToken() %}
         {% for ban in page.items %}
             {% if ban.unbanned == 1 %}
                 {% set isBanned = false %}
@@ -165,7 +189,7 @@
                             ban.player_ip ? getCountryName(ban.player_ip)|capitalize : '<i>Unknown</i>',
                             image(url('img/flags/%s.gif'|format(ban.player_ip ? getCountryIsoCode(ban.player_ip) : 'clear'))),
                             ban.player_id ? ban.player_id : '<i>None</i>',
-                            this.session.has('username') ? ban.player_ip ? ban.player_ip : '<i>None</i>' : '<i>Hidden</i>',
+                            canSeeIp ? (ban.player_ip ? ban.player_ip : '<i>None</i>') : '<i>Hidden</i>',
                             ban.reason,
                             strftime('%G-%m-%d %T', ban.getCreatedTime()),
                             ban.length != 0 ? strftime('%G-%m-%d %T', ban.getCreatedTime() + ban.length * 60) : 'Permament',
@@ -180,107 +204,89 @@
                     </button>
                 </td>
             </tr>
-            {# Modal template for delete and unban actions #}
-            {%- macro ban_modal(ban, name, title, modal_content, button_title, key, token) %}
-            <div class="modal fade" id="{{ name }}Modal{{ ban.getId() }}" tabindex="-1" role="dialog" aria-labelledby="{{ name }}Modal" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="{{ name }}ModalTitle">{{ title }} <strong>{{ ban.player_nick|e }}</strong>  (#{{ ban.getId() }})</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {{ modal_content }}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            {{ form('bans/' ~ name ~ '/' ~ ban.getId(), 'method': 'post') }}
-                                {{ hidden_field('csrf', 'name': key, 'value': token) }}
-                                {{ submit_button(button_title, 'class': 'btn btn-primary') }}
-                            {{ end_form() }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {%- endmacro %}
-            <div class="modal fade" id="editModal{{ banId }}" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editModalTitle">Edit <strong>{{ ban.player_nick|e }}</strong>  (#{{ banId }})</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            {% set currentEditModal = editForms[loop.index0] %}
-                            {{ form('bans/edit/' ~ banId, 'method': 'post', 'id': 'editForm' ~ banId) }}
-                            <div id="editModalPlayerNickRow{{ banId }}" class="form-group row">
-                                {{ currentEditModal.label('player_nick', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'playerNickEditModal' ~ banId, 'required': true ]) }}
-                                <div class="col-sm-10">
-                                    {{ currentEditModal.render('player_nick') }}
-                                </div>
-                            </div>
-                            <div id="editModalPlayerIdRow{{ banId }}" class="form-group row">
-                                {{ currentEditModal.label('player_id', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'playerIdEditModal' ~ banId ]) }}
-                                <div class="col-sm-10">
-                                    {{ currentEditModal.render('player_id') }}
-                                    <div id="playerIdFeedbackControl{{ banId }}" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div id="editModalPlayerIpRow{{ banId }}" class="form-group row">
-                                {{ currentEditModal.label('player_ip', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'playerIpEditModal' ~ banId ]) }}
-                                <div class="col-sm-10">
-                                    {{ currentEditModal.render('player_ip') }}
-                                    <div id="playerIpFeedbackControl{{ banId }}" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div id="editModalReasonRow{{ banId }}" class="form-group row">
-                                {{ currentEditModal.label('reason', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'reasonEditModal' ~ banId ]) }}
-                                <div class="col-sm-10">
-                                    {{ currentEditModal.render('reason') }}
-                                    <div id="reasonFeedbackControl{{ banId }}" class="invalid-feedback"></div>
-                                </div>
-                            </div>
-                            <div id="editModalLengthRow{{ banId }}" class="form-group row">
-                                {{ currentEditModal.label('length', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'lengthEditModal' ~ banId ]) }}
-                                <div class="col-sm-10">
-                                    {{ currentEditModal.render('length') }}
-                                    <div id="lengthFeedbackControl{{ banId }}" class="invalid-feedback"></div>
-                                    <small class="form-text text-muted">Time in minutes. Type 0 for permament ban.</small>
-                                </div>
-                            </div>
-                            <div id="editModalEditReasonRow{{ banId }}" class="form-group row">
-                                {{ currentEditModal.label('editReason', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'editReasonEditModal' ~ banId ]) }}
-                                <div class="col-sm-10">
-                                    {{ currentEditModal.render('editReason') }}
-                                    <div id="editReasonFeedbackControl{{ banId }}" class="invalid-feedback"></div>
-                                    <small class="form-text text-muted">Reason for editing ban.</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            {% if isBanned === false %}
-                                {{ currentEditModal.render('Ban') }}
-                            {% endif %}
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                {{ currentEditModal.render('Save') }}
-                                {{ hidden_field('csrf' ~ banId, 'name': _tokenKey, 'value': _tokenValue) }}
-                            {{ end_form() }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% if isBanned === true %}
-                {{ ban_modal(ban, 'unban', 'Unban', 'Do you really want to unban this player?', 'Unban', _tokenKey, _tokenValue) }}
-            {% endif %}
-            {{ ban_modal(ban, 'delete', 'Delete ban', 'Do you really want to delete this ban?', 'Delete', _tokenKey, _tokenValue) }}
-            <script>
-                {{ partial('bans/partials/ban_edit_modals_js', [ 'banId': banId ]) }}
-            </script>
         {% endfor %}
         </tbody>
     </table>
+    {% for banData in page.items %}
+        {% if banData.unbanned == 1 %}
+            {% set isBanned = false %}
+        {% else %}
+            {% set isBanned = banData.length == 0 or ban.getCreatedTime() + banData.length * 60 > time() %}
+        {% endif %}
+        <div class="modal fade" id="editModal{{ banData.getId() }}" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalTitle">Edit <strong>{{ banData.player_nick|e }}</strong>  (#{{ banData.getId() }})</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% set currentEditModal = editForms[loop.index0] %}
+                        {{ form('bans/edit/' ~ banData.getId(), 'method': 'post', 'id': 'editForm' ~ banData.getId()) }}
+                        <div id="editModalPlayerNickRow{{ banData.getId() }}" class="form-group row">
+                            {{ currentEditModal.label('player_nick', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'playerNickEditModal' ~ banData.getId(), 'required': true ]) }}
+                            <div class="col-sm-10">
+                                {{ currentEditModal.render('player_nick') }}
+                            </div>
+                        </div>
+                        <div id="editModalPlayerIdRow{{ banData.getId() }}" class="form-group row">
+                            {{ currentEditModal.label('player_id', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'playerIdEditModal' ~ banData.getId() ]) }}
+                            <div class="col-sm-10">
+                                {{ currentEditModal.render('player_id') }}
+                                <div id="playerIdFeedbackControl{{ banData.getId() }}" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div id="editModalPlayerIpRow{{ banData.getId() }}" class="form-group row">
+                            {{ currentEditModal.label('player_ip', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'playerIpEditModal' ~ banData.getId() ]) }}
+                            <div class="col-sm-10">
+                                {{ currentEditModal.render('player_ip') }}
+                                <div id="playerIpFeedbackControl{{ banData.getId() }}" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div id="editModalReasonRow{{ banData.getId() }}" class="form-group row">
+                            {{ currentEditModal.label('reason', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'reasonEditModal' ~ banData.getId() ]) }}
+                            <div class="col-sm-10">
+                                {{ currentEditModal.render('reason') }}
+                                <div id="reasonFeedbackControl{{ banData.getId() }}" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div id="editModalLengthRow{{ banData.getId() }}" class="form-group row">
+                            {{ currentEditModal.label('length', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'lengthEditModal' ~ banData.getId() ]) }}
+                            <div class="col-sm-10">
+                                {{ currentEditModal.render('length') }}
+                                <div id="lengthFeedbackControl{{ banData.getId() }}" class="invalid-feedback"></div>
+                                <small class="form-text text-muted">Time in minutes. Type 0 for permament ban.</small>
+                            </div>
+                        </div>
+                        <div id="editModalEditReasonRow{{ banData.getId() }}" class="form-group row">
+                            {{ currentEditModal.label('editReason', [ 'class': 'col-sm-2 col-form-label col-form-label-sm', 'for': 'editReasonEditModal' ~ banData.getId() ]) }}
+                            <div class="col-sm-10">
+                                {{ currentEditModal.render('editReason') }}
+                                <div id="editReasonFeedbackControl{{ banData.getId() }}" class="invalid-feedback"></div>
+                                <small class="form-text text-muted">Reason for editing ban.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        {% if isBanned === false %}
+                            {{ currentEditModal.render('Ban') }}
+                        {% endif %}
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            {{ currentEditModal.render('Save') }}
+                            {{ hidden_field('csrf' ~ banData.getId(), 'name': this.security.getTokenKey(), 'value': this.security.getToken()) }}
+                        {{ end_form() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if isBanned === true %}
+            {{ ban_modal(banData, 'unban', 'Unban', 'Do you really want to unban this player?', 'Unban') }}
+        {% endif %}
+        {{ ban_modal(banData, 'delete', 'Delete ban', 'Do you really want to delete this ban?', 'Delete') }}
+        <script>
+            {{ partial('bans/partials/ban_edit_modals_js', [ 'banId': banData.getId() ]) }}
+        </script>
+    {% endfor %}
 {% endblock %}
