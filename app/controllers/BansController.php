@@ -58,7 +58,7 @@ class BansController extends ControllerBase {
                                         <strong>Country</strong>
                                     </td>
                                     <td>
-                                        %s <img src="/img/flags/%s.gif">
+                                        %s %s
                                     </td>
                                 </tr>
                                 <tr>
