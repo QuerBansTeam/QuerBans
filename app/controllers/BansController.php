@@ -291,7 +291,7 @@ class BansController extends ControllerBase {
                 }
             }
         }
-        echo json_encode([
+        return $this->response->setJsonContent([
             "error" => [
                 "exist" => $error,
                 "fields" => [
