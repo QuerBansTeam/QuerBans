@@ -268,7 +268,7 @@ class BansController extends ControllerBase {
         $fieldsNames = [];
         $validateMessages = [];
 
-        if ($this->request->isPost() && $this->request->isAjax()) {
+        if ($this->request->isPost() && $this->request->isAjax() && $this->security->checkToken(null, null, false)) {
 
             $form = new BanEditForm();
 
