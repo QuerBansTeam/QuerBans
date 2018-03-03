@@ -147,7 +147,7 @@ $di->setShared('forms', function () {
 });
 
 $di->setShared('crypt', function () {
-        $crypt = new Crypt();
-        $crypt->setKey($this->getConfig()->application->cryptKey);
-        return $crypt;
+    $crypt = new Crypt();
+    $crypt->setKey($this->getConfig()->application->cryptKey);
+    return $crypt;
 });
