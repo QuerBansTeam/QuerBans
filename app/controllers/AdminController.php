@@ -24,11 +24,6 @@ class AdminController extends ControllerBase {
         return false;
     }
 
-    public function afterExecuteRoute() {
-        $this->view->msgType = $this->dispatcher->hasParam('msgType') ? $this->dispatcher->getParam('msgType') : null;
-        $this->view->msgContent = $this->dispatcher->hasParam('msgContent') ? $this->dispatcher->getParam('msgContent') : null;
-    }
-
     public function initialize() {
         $this->view->activePage = 'admin';
         $this->view->activePageAdmin = 'index';
@@ -37,6 +32,10 @@ class AdminController extends ControllerBase {
     public function indexAction() {
         $recomPhpVer = '7.2.0';
         $recomPhalconVer = '3.3.0';
+
+        if ($this->dispatcher->hasParam('msgs')) {
+            $this->view->msgs = $this->dispatcher->getParam('msgs');
+        }
 
         $phpVer = $this->view->phpversion = phpversion();
         $phalconVer = $this->view->phalconversion = phpversion('phalcon');
