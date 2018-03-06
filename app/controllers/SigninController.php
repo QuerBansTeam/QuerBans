@@ -50,7 +50,6 @@ class SigninController extends ControllerBase {
                     // Setup session
                     $this->session->set('id', $sessionId);
                     $this->session->set('username', $user->username);
-                    $this->session->set('loggedin', true);
 
                     $user->update([
                         "sessionkey" => $sessionId,
@@ -104,10 +103,10 @@ class SigninController extends ControllerBase {
         }
 
         /*
-         * Destroy session and set that user isn't logged in in a new session
+         * Destroy session
          */
         $this->session->destroy();
-        $this->session->set('loggedin', false);
+        $_SESSION = [];
 
         $msgs[0]["type"] = 0;
         $msgs[0]["content"] = 'You have been logged out successfully!';
