@@ -16,12 +16,12 @@ class SigninController extends ControllerBase {
     }
 
     public function loginAction() {
+        $msgs[0]["dismiss"] = true;
+        
         /* User is currently logged in */
         if ($this->session->has('id')) {
-
             $msgs[0]["type"] = 1;
             $msgs[0]["content"] = 'You are currently logged in!';
-            $msgs[0]["dismiss"] = true;
 
             return $this->dispatcher->forward([
                 "controller" => 'index',
@@ -75,7 +75,6 @@ class SigninController extends ControllerBase {
 
         $msgs[0]["type"] = 0;
         $msgs[0]["content"] = 'You have been logged in successfully!';
-        $msgs[0]["dismiss"] = true;
 
         return $this->dispatcher->forward([
             "controller" => 'signin',

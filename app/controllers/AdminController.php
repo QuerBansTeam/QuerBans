@@ -15,7 +15,7 @@ class AdminController extends ControllerBase {
             if ($user->group->access_acp)
                 return true;
         }
-        
+
         $this->dispatcher->forward([
             'controller' => 'index',
             'action'     => 'index',
