@@ -32,6 +32,11 @@ $router->add('/bans/validate', [
     "action" => 'validate',
 ]);
 
+$router->add('/bans/view/{banid}', [
+    "controller" => 'bans',
+    "action" => 'view',
+]);
+
 $router->add('/adminlist', [
     "controller" => 'adminlist',
     "action" => 'index',

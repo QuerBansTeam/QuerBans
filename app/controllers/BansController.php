@@ -381,6 +381,33 @@ class BansController extends ControllerBase {
             ],
         ]);
     }
+
+    public function viewAction() {
+        $banId = $this->dispatcher->getParam('banid');
+        $ban = Bans::findFirst([
+            "id = $banId",
+        ]);
+
+        $msgs = [];
+        $msgsCount = 0;
+
+        if ($this->dispatcher->hasParam('msgs')) {
+            $msgs = $this->dispatcher->getParam('msgs');
+            $msgsCount = count($msgs);
+        }
+
+        if (!$ban) {
+            $msgs[$msgsCount]["type"] = 1;
+            $msgs[$msgsCount]["content"] = "Ban #$banId has not been found!";
+            $msgs[$msgsCount++]["dismiss"] = false;
+        } else {
+            $this->view->banData = $ban;
+        }
+
+        if ($msgsCount !== 0) {
+            $this->view->msgs = $msgs;
+        }
+    }
 }
 
 class BanEditForm extends Form
