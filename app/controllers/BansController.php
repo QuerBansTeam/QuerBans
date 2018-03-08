@@ -245,9 +245,6 @@ class BansController extends ControllerBase {
                 foreach ($messages as $message) {
                     $msgs[0]["content"][] = $message;
                 }
-            } else {
-                $msgs[0]["type"] = 0;
-                $msgs[0]["content"] = "Ban #$banId deleted!";
             }
 
             /*$editInfo = new BansEdit();
