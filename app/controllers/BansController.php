@@ -177,6 +177,9 @@ class BansController extends ControllerBase {
                 ]);
             }
 
+            $msgs[0]["type"] = 0;
+            $msgs[0]["content"] = "Ban #$banId deleted!";
+
             if ($ban->delete() === false) {
                 $msgs[0]["type"] = 1;
                 $messages = $ban->getMessages();
@@ -184,9 +187,6 @@ class BansController extends ControllerBase {
                 foreach ($messages as $message) {
                     $msgs[0]["content"][] = $message;
                 }
-            } else {
-                $msgs[0]["type"] = 0;
-                $msgs[0]["content"] = "Ban #$banId deleted!";
             }
 
             return $this->dispatcher->forward([
@@ -308,6 +308,9 @@ class BansController extends ControllerBase {
                 $results['player_nick'] = null;
             }
 
+            $msgs[0]["type"] = 0;
+            $msgs[0]["content"] = "Ban #$banId has been successfully edited!";
+
             if ($ban->update($results) === false) {
                 $msgs[0]["type"] = 1;
                 $messages = $ban->getMessages();
@@ -315,9 +318,6 @@ class BansController extends ControllerBase {
                 foreach ($messages as $message) {
                     $msgs[0]["content"][] = $message;
                 }
-            } else {
-                $msgs[0]["type"] = 0;
-                $msgs[0]["content"] = "Ban #$banId has been successfully edited!";
             }
 
             return $this->dispatcher->forward([
