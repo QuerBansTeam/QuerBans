@@ -17,7 +17,7 @@ class BansController extends ControllerBase {
 
     public function initialize() {
         $this->view->activePage = 'bans';
-        $this->currentPage = $this->cookies->has('currentPage') ? $this->cookies->get('currentPage')->getValue() : 1;
+        $this->currentPage = $this->cookies->has('bansPage') ? $this->cookies->get('bansPage')->getValue() : 1;
     }
 
     public function indexAction() {
@@ -29,7 +29,7 @@ class BansController extends ControllerBase {
 
         $pageNum = (int)$this->dispatcher->getParam('page');
 
-        $this->cookies->set('currentPage', $pageNum);
+        $this->cookies->set('bansPage', $pageNum);
 
         $bansToDisplay = new Model([
             "data" => $bans,
