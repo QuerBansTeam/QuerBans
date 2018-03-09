@@ -161,11 +161,13 @@ class BansController extends ControllerBase {
          * Get user's permissions
          */
         $group = self::getGroup();
+        $resource = $this->dispatcher->getModuleName();
+        
         $this->view->canSeeIp = $this->acl->isAllowed($group, 'general', 'showip');
-        $this->view->canDeleteBan = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'delete');
-        $this->view->canUnbanBan = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'unban');
-        $this->view->canEditBan = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'edit');
-        $this->view->canBanAgain = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'ban');
+        $this->view->canDeleteBan = $this->acl->isAllowed($group, $resource, 'delete');
+        $this->view->canUnbanBan = $this->acl->isAllowed($group, $resource, 'unban');
+        $this->view->canEditBan = $this->acl->isAllowed($group, $resource, 'edit');
+        $this->view->canBanAgain = $this->acl->isAllowed($group, $resource, 'ban');
 
         if ($this->dispatcher->hasParam('msgs')) {
             $this->view->msgs = $this->dispatcher->getParam('msgs');
