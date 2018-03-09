@@ -4,6 +4,9 @@ class IndexController extends ControllerBase
 {
     public function indexAction() {
 
+        // Set default group
+        self::getGroup();
+
         $config = Config::findFirst();
 
         if ($this->dispatcher->hasParam('msgs')) {

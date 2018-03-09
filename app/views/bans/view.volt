@@ -33,7 +33,7 @@
                     </tr>
                     <tr>
                         <td><strong>IP address</strong></td>
-                        <td>{{ this.session.get('loggedin') ? banData.player_ip : '<i>Hidden</i>' }}</td>
+                        <td>{{ canSeeIp ? banData.player_ip : '<i>Hidden</i>' }}</td>
                     </tr>
                     <tr>
                         <td><strong>Reason</strong></td>

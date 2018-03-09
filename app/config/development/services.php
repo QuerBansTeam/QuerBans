@@ -12,6 +12,7 @@ use Phalcon\Forms\Manager as FormsManager;
 use Phalcon\Crypt;
 use Phalcon\Security;
 use Phalcon\Http\Response\Cookies;
+use Phalcon\Acl\Adapter\Memory as AclList;
 
 /**
  * Shared configuration service
@@ -157,4 +158,38 @@ $di->setShared('cookies', function () {
     $cookies = new Cookies();
     $cookies->useEncryption(true);
     return $cookies;
+});
+
+$di->setShared('acl', function () {
+    if (!is_file(APP_PATH . '/config/permissions.data')) {
+        // Set up default permissions
+        $acl = new AclList();
+        $acl->setDefaultAction(Phalcon\Acl::DENY);
+
+        $acl->addRole('admin');
+        $acl->addRole('guest');
+        $acl->addResource('general', [
+            'showip',
+            'acp',
+        ]);
+        $acl->addResource('Bans', [
+            'ban',
+            'unban',
+            'edit',
+            'delete',
+            'create',
+            'view',
+            'index',
+        ]);
+        $acl->allow('admin', '*', '*');
+        $acl->allow('guest', 'Bans', 'index');
+        $acl->allow('guest', 'Bans', 'view');
+
+        // Store serialized list into plain file
+        file_put_contents(APP_PATH . '/config/permissions.data', serialize($acl));
+    } else {
+        // Restore ACL object from serialized file
+        $acl = unserialize(file_get_contents(APP_PATH . '/config/permissions.data'));
+    }
+    return $acl;
 });

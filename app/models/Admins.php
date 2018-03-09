@@ -7,16 +7,12 @@ class Admins extends Model
     public function initialize() {
         $this->hasMany('id', 'BansEdit', 'admin_id');
         $this->hasMany('id', 'AdminServer', 'admin_id');
-
-        $this->belongsTo('groupid', 'Groups', 'id', [
-            "alias" =>  'group',
-        ]);
     }
 
     protected $id;
     public $username;
     public $password;
-    public $groupid;
+    public $groupname;
     public $email;
     public $srv_access;
     public $flags;

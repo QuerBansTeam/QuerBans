@@ -20,6 +20,30 @@ class BansController extends ControllerBase {
         $this->currentPage = $this->cookies->has('bansPage') ? $this->cookies->get('bansPage')->getValue() : 1;
     }
 
+    public function beforeExecuteRoute($dispatcher) {
+        $group = self::getGroup();
+        if ($this->acl->isAllowed($group, 'Bans', $dispatcher->getActionName())) {
+            return true;
+        }
+
+        $msgs[0]["type"] = 1;
+        $msgs[0]["content"] = 'You don\'t have access to that!';
+        $msgs[0]["dismiss"] = 1;
+
+        $pageNum = $dispatcher->hasParam('page') ? $dispatcher->getParam('page') : 1;
+
+        $this->dispatcher->forward([
+            "controller" => 'bans',
+            "action" => 'index',
+            "params" => [
+                "page" => $pageNum,
+                "msgs" => $msgs,
+            ],
+        ]);
+
+        return false;
+    }
+
     public function indexAction() {
         $qbConfig = Config::findFirst();
 
@@ -136,18 +160,12 @@ class BansController extends ControllerBase {
         /*
          * Get user's permissions
          */
-        $this->view->canSeeIp = false;
-        $this->view->
-        $sessionId = $this->session->get('id');
-        $user = Admins::findFirst([
-            "sessionkey = '$sessionId'",
-        ]);
-
-        if ($user) {
-            if ($user->group->show_ip) {
-                $this->view->canSeeIp = true;
-            }
-        }
+        $group = self::getGroup();
+        $this->view->canSeeIp = $this->acl->isAllowed($group, 'general', 'showip');
+        $this->view->canDeleteBan = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'delete');
+        $this->view->canUnbanBan = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'unban');
+        $this->view->canEditBan = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'edit');
+        $this->view->canBanAgain = $this->acl->isAllowed($group, $this->dispatcher->getModuleName(), 'ban');
 
         if ($this->dispatcher->hasParam('msgs')) {
             $this->view->msgs = $this->dispatcher->getParam('msgs');
@@ -404,6 +422,8 @@ class BansController extends ControllerBase {
         if ($msgsCount !== 0) {
             $this->view->msgs = $msgs;
         }
+
+        $this->view->canSeeIp = $this->acl->isAllowed($this->session->get('group'), 'general', 'showip');
     }
 }
 

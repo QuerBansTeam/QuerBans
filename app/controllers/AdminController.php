@@ -6,19 +6,21 @@ use Phalcon\Mvc\Model\Query\Builder;
 class AdminController extends ControllerBase {
 
     public function beforeExecuteRoute($dispatcher) {
-        if ($this->session->has('id')) {
-            $sessionId = $this->session->get('id');
-            $user = Admins::findFirst([
-                "sessionkey = '$sessionId'"
-            ]);
-
-            if ($user->group->access_acp)
-                return true;
+        $group = self::getGroup();
+        if ($this->acl->isAllowed($group, 'general', 'acp')) {
+            return true;
         }
+
+        $msgs[0]["type"] = 1;
+        $msgs[0]["content"] = 'You don\'t have access to that!';
+        $msgs[0]["dismiss"] = 0;
 
         $this->dispatcher->forward([
             'controller' => 'index',
-            'action'     => 'index',
+            'action' => 'index',
+            'params' => [
+                'msgs' => $msgs,
+            ],
         ]);
 
         return false;

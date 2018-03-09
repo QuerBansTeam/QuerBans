@@ -50,6 +50,7 @@ class SigninController extends ControllerBase {
                     // Setup session
                     $this->session->set('id', $sessionId);
                     $this->session->set('username', $user->username);
+                    $this->session->set('group', $user->groupname);
 
                     $user->update([
                         "sessionkey" => $sessionId,
@@ -106,6 +107,7 @@ class SigninController extends ControllerBase {
          */
         $this->session->destroy();
         $_SESSION = [];
+        $this->session->set('groupname', 'guest');
 
         $msgs[0]["type"] = 0;
         $msgs[0]["content"] = 'You have been logged out successfully!';

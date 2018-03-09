@@ -167,15 +167,9 @@
                 <td>
                     {% set serverHostname = ban.server ? ban.server.hostname : 'website' %}
                     {% set banId = ban.getId() %}
-                    {% set unbanButton = '' %}
-                    {% set editButton = '' %}
-                    {% set deleteButton = '' %}
-
-                    {% if this.session.has('username') %}
-                        {% set unbanButton = isBanned ? '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#unbanModal%d">Unban</button>'|format(banId) : '' %}
-                        {% set editButton = '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal%d">Edit</button>'|format(banId) %}
-                        {% set deleteButton = '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal%d">Delete</button>'|format(banId) %}
-                    {% endif %}
+                    {% set unbanButton = canUnbanBan ? (isBanned ? '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#unbanModal%d">Unban</button>'|format(banId) : '') : '' %}
+                    {% set editButton = canEditBan ? '<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal%d">Edit</button>'|format(banId) : '' %}
+                    {% set deleteButton = canDeleteBan ? '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal%d">Delete</button>'|format(banId) : '' %}
 
                     <button id="bidButton{{ banId }}"
                         type="button"
@@ -270,7 +264,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        {% if isBanned === false %}
+                        {% if isBanned === false and canBanAgain %}
                             {{ currentEditModal.render('Ban') }}
                         {% endif %}
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
