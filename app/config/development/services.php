@@ -11,6 +11,7 @@ use Phalcon\Mvc\Model\Manager as ModelManager;
 use Phalcon\Forms\Manager as FormsManager;
 use Phalcon\Crypt;
 use Phalcon\Security;
+use Phalcon\Http\Response\Cookies;
 
 /**
  * Shared configuration service
@@ -150,4 +151,10 @@ $di->setShared('crypt', function () {
     $crypt = new Crypt();
     $crypt->setKey($this->getConfig()->application->cryptKey);
     return $crypt;
+});
+
+$di->setShared('cookies', function () {
+    $cookies = new Cookies();
+    $cookies->useEncryption(true);
+    return $cookies;
 });
