@@ -1,4 +1,5 @@
 cache/*
 !cache/.gitkeep
 app/config/development/*
+!app/config/development/.gitkeep
 app/config/permissions.data
