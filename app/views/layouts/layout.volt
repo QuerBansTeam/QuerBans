@@ -42,7 +42,7 @@
 				{% endif %}
 			</ul>
 			{% if this.session.has('username') %}
-				{% if this.acl.isAllowed(groupName, 'general', 'acp') %}
+				{% if this.acl.isAllowed(groupName, 'Admin', 'index') %}
 					{{ link_to(url('admin'), '<i class="fas fa-user-secret fa-fw"></i> Admin Panel', 'class': 'btn btn-light', 'role': 'button') }}&nbsp;
 				{% endif %}
 				{{ link_to(url('signin/logout'), '<i class="fas fa-sign-out-alt fa-fw"></i> Log out ' ~ this.session.get('username'), 'class': 'btn btn-outline-danger', 'role': 'button') }}

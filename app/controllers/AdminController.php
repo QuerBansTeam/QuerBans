@@ -7,7 +7,7 @@ class AdminController extends ControllerBase {
 
     public function beforeExecuteRoute($dispatcher) {
         $group = self::getGroup();
-        if ($this->acl->isAllowed($group, 'general', 'acp')) {
+        if ($this->acl->isAllowed($group, 'Admin', $dispatcher->getActionName())) {
             return true;
         }
 
