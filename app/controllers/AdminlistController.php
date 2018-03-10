@@ -9,6 +9,27 @@ class AdminlistController extends ControllerBase {
         $this->view->activePage = 'adminlist';
     }
 
+    public function beforeExecuteRoute($dispatcher) {
+        $group = self::getGroup();
+        if ($this->acl->isAllowed($group, 'Adminlist', $dispatcher->getActionName())) {
+            return true;
+        }
+
+        $msgs[0]["type"] = 1;
+        $msgs[0]["content"] = 'You don\'t have access to that!';
+        $msgs[0]["dismiss"] = 0;
+
+        $this->dispatcher->forward([
+            'controller' => 'index',
+            'action' => 'index',
+            'params' => [
+                'msgs' => $msgs,
+            ],
+        ]);
+
+        return false;
+    }
+
     public function indexAction() {
         if ($this->dispatcher->hasParam('msgs')) {
             $this->view->msgs = $this->dispatcher->getParam('msgs');

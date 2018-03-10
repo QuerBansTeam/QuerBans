@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block navbar %}
+	{% set groupName = this.session.has('group') ? this.session.get('group') : 'guest' %}
 	<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
 		<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle menu">
 			<span class="navbar-toggler-icon"></span>
@@ -23,12 +24,14 @@
 						<span class="sr-only">(current)</span>
 					{% endif %}
 				</li>
-				<li class="nav-item {{ activePage === 'adminlist' ? 'active' : '' }}">
-					{{ link_to(url('adminlist'), '<i class="fas fa-users fa-fw"></i> Admin list', 'class': 'nav-link') }}
-					{% if activePage === "adminlist" %}
-						<span class="sr-only">(current)</span>
-					{% endif %}
-				</li>
+				{% if this.acl.isAllowed(groupName, 'Adminlist', 'view') %}
+					<li class="nav-item {{ activePage === 'adminlist' ? 'active' : '' }}">
+						{{ link_to(url('adminlist'), '<i class="fas fa-users fa-fw"></i> Admin list', 'class': 'nav-link') }}
+						{% if activePage === "adminlist" %}
+							<span class="sr-only">(current)</span>
+						{% endif %}
+					</li>
+				{% endif %}
 				<li class="nav-item {{ activePage === 'servers' ? 'active' : '' }}">
 					{{ link_to(url('servers'), '<i class="fas fa-server fa-fw"></i> Servers', 'class': 'nav-link') }}
 					{% if activePage === "adminlist" %}
@@ -37,7 +40,6 @@
 				</li>
 			</ul>
 			{% if this.session.has('username') %}
-				{% set groupName = this.session.has('group') ? this.session.get('group') : 'guest' %}
 				{% if this.acl.isAllowed(groupName, 'general', 'acp') %}
 					{{ link_to(url('admin'), '<i class="fas fa-user-secret fa-fw"></i> Admin Panel', 'class': 'btn btn-light', 'role': 'button') }}&nbsp;
 				{% endif %}
