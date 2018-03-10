@@ -32,12 +32,14 @@
 						{% endif %}
 					</li>
 				{% endif %}
-				<li class="nav-item {{ activePage === 'servers' ? 'active' : '' }}">
-					{{ link_to(url('servers'), '<i class="fas fa-server fa-fw"></i> Servers', 'class': 'nav-link') }}
-					{% if activePage === "adminlist" %}
-						<span class="sr-only">(current)</span>
-					{% endif %}
-				</li>
+				{% if this.acl.isAllowed(groupName, 'Servers', 'index') %}
+					<li class="nav-item {{ activePage === 'servers' ? 'active' : '' }}">
+						{{ link_to(url('servers'), '<i class="fas fa-server fa-fw"></i> Servers', 'class': 'nav-link') }}
+						{% if activePage === "servers" %}
+							<span class="sr-only">(current)</span>
+						{% endif %}
+					</li>
+				{% endif %}
 			</ul>
 			{% if this.session.has('username') %}
 				{% if this.acl.isAllowed(groupName, 'general', 'acp') %}
