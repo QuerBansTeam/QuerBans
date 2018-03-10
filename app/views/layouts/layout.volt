@@ -24,7 +24,7 @@
 						<span class="sr-only">(current)</span>
 					{% endif %}
 				</li>
-				{% if this.acl.isAllowed(groupName, 'Adminlist', 'view') %}
+				{% if this.acl.isAllowed(groupName, 'Adminlist', 'index') %}
 					<li class="nav-item {{ activePage === 'adminlist' ? 'active' : '' }}">
 						{{ link_to(url('adminlist'), '<i class="fas fa-users fa-fw"></i> Admin list', 'class': 'nav-link') }}
 						{% if activePage === "adminlist" %}
