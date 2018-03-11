@@ -181,7 +181,7 @@
                         data-content="{{ popoverContentTemplate|format(
                             ban.player_nick ? ban.player_nick : '<i>Unknown</i>',
                             ban.player_ip ? getCountryName(ban.player_ip)|capitalize : '<i>Unknown</i>',
-                            image(url('img/flags/%s.gif'|format(ban.player_ip ? getCountryIsoCode(ban.player_ip) : 'clear'))),
+                            image('img/flags/%s.gif'|format(ban.player_ip ? getCountryIsoCode(ban.player_ip) : 'clear')),
                             ban.player_id ? ban.player_id : '<i>None</i>',
                             canSeeIp ? (ban.player_ip ? ban.player_ip : '<i>None</i>') : '<i>Hidden</i>',
                             ban.reason,
