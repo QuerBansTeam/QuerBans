@@ -205,7 +205,7 @@
         {% if banData.unbanned == 1 %}
             {% set isBanned = false %}
         {% else %}
-            {% set isBanned = banData.length == 0 or ban.getCreatedTime() + banData.length * 60 > time() %}
+            {% set isBanned = banData.length == 0 or banData.getCreatedTime() + banData.length * 60 > time() %}
         {% endif %}
         <div class="modal fade" id="editModal{{ banData.getId() }}" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
